@@ -2,9 +2,7 @@
 
 <template>
   <section id="database-share">
-    <h2>database-share</h2>
-    <textarea name="" id="" cols="30" rows="10"></textarea>
-    <button>Update data</button>
+    <h2>Udostępnianie danych</h2>
   </section>
 </template>
 
