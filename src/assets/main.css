@@ -1,6 +1,21 @@
 @import './reset.css';
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import 'bootstrap-icons';
 
 :root {
   font-family: 'Rajdhani', sans-serif;
+  font-size: 100%;
+}
+
+body {
+  max-width: 1280px;
+  padding-inline: calc(0.625vw + 0.6rem);
+  margin-inline: auto;
+}
+
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 1ch;
 }
