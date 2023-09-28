@@ -8,5 +8,5 @@ export const useCurrentTabStore = defineStore(
 
     return { tabId }
   },
-  { persist: false }
+  { persist: true }
 )
