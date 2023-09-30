@@ -1,61 +1,51 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { defineDataType } from '../DatabaseUpdateUtils/functions_lib'
+import PasteButton from '../DatabaseUpdateUtils/PasteButton.vue'
 
-const textarea = ref('')
-const message = ref('')
-const clipboardPerrmisionTest = ref(true)
+const textbox = ref('')
+const messagebox = ref('')
 
-await navigator.permissions
-  .query({ name: 'clipboard-read' as PermissionName })
-  .then((permissionStatus) => {
-    permissionStatus.addEventListener('change', () => {
-      if (permissionStatus.state === 'denied') {
-        clipboardPerrmisionTest.value = false
-      }
-    })
-  })
-  .catch((err) => {
-    console.log('/** Browser permission issue. **/\n', err)
-    clipboardPerrmisionTest.value = false
-  })
+watch(textbox, () => {
+  const { message } = defineDataType(textbox.value)
+  messagebox.value = message
+})
 
-function dummy(e: Event): void {
+async function paste(data: Promise<string>) {
+  textbox.value = await data
+}
+
+function reset() {
+  textbox.value = ''
+}
+
+function submit(e: Event): void {
   console.log(e)
 }
 
-async function clip() {
-  message.value = 'some message\nsome message\nsome message\n'
-
-  const clipboardData = await navigator.clipboard
-    .readText()
-    .catch((reason) => console.error(reason))
-
-  if (clipboardData) {
-    textarea.value = clipboardData
-  }
-}
+// function testinput(e: Event) {
+// const t = e.target as HTMLInputElement
+// const data = t?.value || ''
+//   console.log(e)
+// }
 </script>
 
 <template>
   <section id="database-update">
     <h2>Wczytywanie danych</h2>
-    <form @submit.prevent="dummy">
-      <textarea id="data-input" v-model="textarea"></textarea>
+    <form @submit.prevent="submit">
+      <textarea class="text-box" v-model="textbox"></textarea>
 
-      <div :class="['message-box', { active: message }]">
-        <pre>{{ message }}</pre>
-      </div>
+      <input type="text" class="message-box" v-model="messagebox" disabled />
+      <!-- <input type="text" class="message-box" v-model="messagebox" readonly /> -->
 
       <div class="buttonbar">
-        <button type="reset" @click="message = ''">
+        <button type="button" @click="reset">
           <span>Wyczyść</span>
           <i class="bi bi-backspace"></i>
         </button>
 
-        <button type="button" v-if="clipboardPerrmisionTest" @click="clip">
-          <span>Wklej ze schowka</span>
-          <i class="bi bi-save"></i>
-        </button>
+        <PasteButton @clipboard-paste="paste" />
 
         <button type="submit">
           <span>Zatwierdź</span>
@@ -67,14 +57,20 @@ async function clip() {
 </template>
 
 <style scoped>
-#data-input {
+form {
+  display: grid;
+  gap: 1ch;
+}
+.text-box {
   padding: 0.6ch 1ch;
   width: 100%;
   height: 5rem;
 }
 
 .message-box {
-  border: pink;
+  border: none;
+  width: 100%;
+  background-color: transparent;
 
   display: grid;
   grid-template-rows: 0fr;
