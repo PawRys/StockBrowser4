@@ -38,8 +38,7 @@ async function clipboardPaste() {
     v-if="clipboardPerrmisionTest"
     @click="$emit('clipboardPaste', clipboardPaste())"
   >
-    <span>Wklej ze schowka</span>
-    <i class="bi bi-save"></i>
+    <slot></slot>
   </button>
 </template>
 
