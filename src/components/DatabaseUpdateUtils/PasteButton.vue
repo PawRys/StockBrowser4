@@ -16,17 +16,17 @@ await navigator.permissions
     })
   })
   .catch((err) => {
-    console.log('/** Browser permission issue. **/\n', err)
+    console.log('/** Browser permission issue. **/', err)
     clipboardPerrmisionTest.value = false
   })
 
 async function clipboardPaste() {
-  let result: string = ''
+  let result = ''
 
   await navigator.clipboard
     .readText()
-    .then((value) => (result = value))
-    .catch((reason) => console.log('** Clipboard issue **', reason))
+    .then((text) => (result = text))
+    .catch((reason) => console.log('/** Clipboard issue **/', reason))
 
   return result
 }
