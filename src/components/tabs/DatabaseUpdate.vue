@@ -2,6 +2,8 @@
 import { ref, watch } from 'vue'
 import { defineDataType } from '../DatabaseUpdateUtils/functions_lib'
 import PasteButton from '../DatabaseUpdateUtils/PasteButton.vue'
+import { stany_ilosci } from '../DatabaseUpdateUtils/stany-ilosci'
+import { stany_ceny } from '../DatabaseUpdateUtils/stany-ceny'
 
 const textbox = ref('')
 const messagebox = ref('')
@@ -15,7 +17,7 @@ async function paste(data: Promise<string>) {
   textbox.value = await data
 }
 
-function reset() {
+function clear() {
   textbox.value = ''
 }
 
@@ -40,17 +42,26 @@ function submit(e: Event): void {
       <!-- <input type="text" class="message-box" v-model="messagebox" readonly /> -->
 
       <div class="buttonbar">
-        <button type="button" @click="reset">
+        <button type="button" @click="clear">
           <span>Wyczyść</span>
           <i class="bi bi-backspace"></i>
         </button>
 
-        <PasteButton @clipboard-paste="paste" />
+        <PasteButton @clipboard-paste="paste">
+          <span>Wklej ze schowka</span>
+          <i class="bi bi-save"></i>
+        </PasteButton>
 
         <button type="submit">
           <span>Zatwierdź</span>
           <i class="bi bi-check2"></i>
         </button>
+      </div>
+
+      <div class="buttonbar">
+        <h4>Template data</h4>
+        <button type="button" @click="textbox = stany_ilosci">Wklej Stany ilościowe</button>
+        <button type="button" @click="textbox = stany_ceny">Wklej Stany z cenami</button>
       </div>
     </form>
   </section>
