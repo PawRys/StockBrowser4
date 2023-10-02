@@ -19,3 +19,8 @@ button,
   align-items: center;
   gap: 1ch;
 }
+
+.buttonbar {
+  display: flex;
+  gap: 1ch;
+}
