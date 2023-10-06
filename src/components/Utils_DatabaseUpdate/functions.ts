@@ -9,7 +9,7 @@ export function defineDataType(input: string) {
     message = ``
   } else {
     dataType = false
-    message = `Nie rozpoznano danych. ✖`
+    message = `Nie rozpoznano danych. ❌`
   }
   const isStocks = /Stany i rezerwacje towarów/i.test(text)
   const isCorrectStockColumns =
@@ -47,4 +47,26 @@ export function defineDataType(input: string) {
   }
 
   return { data: dataType, message: message }
+}
+
+export function convertToArray(data: string) {
+  const result = []
+  const lines = data.match(/[^\r\n]+/g) || []
+  for (const line of lines) {
+    const row = line.trim().split(/\t+/)
+    result.push(row)
+  }
+  return result
+}
+
+export function removeGarbage(data: string[][], datatype: string) {
+  const forbidden = /(stany|kod|podsumowanie|dostawa|transport|usługa|zamówienie)/gi
+  const result = []
+  for (const row of data) {
+    if (datatype === 'prices' && row.length !== 6) continue
+    if (datatype === 'stocks' && row.length !== 7) continue
+    if (row.join('\t').match(forbidden)) continue
+    result.push(row)
+  }
+  return result
 }
