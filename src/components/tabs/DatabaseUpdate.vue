@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { defineDataType } from '../DatabaseUpdateUtils/functions_lib'
-import PasteButton from '../DatabaseUpdateUtils/PasteButton.vue'
-import { stany_ilosci } from '../DatabaseUpdateUtils/stany-ilosci'
-import { stany_ceny } from '../DatabaseUpdateUtils/stany-ceny'
+import { useStocks } from '@/stores/stocks'
+import { defineDataType, convertToArray, removeGarbage } from '../Utils_DatabaseUpdate/functions'
+import { stany_ilosci } from '../Utils_DatabaseUpdate/stany-ilosci'
+import { stany_ceny } from '../Utils_DatabaseUpdate/stany-ceny'
+import PasteButton from '../Utils_DatabaseUpdate/PasteButton.vue'
 
+const stocks_store = useStocks()
 const textbox = ref('')
 const messagebox = ref('')
+const datatype = ref()
 
 watch(textbox, () => {
-  const { message } = defineDataType(textbox.value)
+  const { message, data } = defineDataType(textbox.value)
+  datatype.value = data
   messagebox.value = message
 })
 
@@ -22,24 +26,23 @@ function clear() {
 }
 
 function submit(e: Event): void {
-  console.log(e)
+  const form = e.target as HTMLFormElement
+  const form_textbox = form.elements.namedItem('textBox') as HTMLInputElement
+  const array_data = convertToArray(form_textbox.value)
+  const purified_data = removeGarbage(array_data, datatype.value)
+  stocks_store.products.push({ id: 'someid' })
+  console.log(array_data)
+  console.log(purified_data)
 }
-
-// function testinput(e: Event) {
-// const t = e.target as HTMLInputElement
-// const data = t?.value || ''
-//   console.log(e)
-// }
 </script>
 
 <template>
   <section id="database-update">
     <h2>Wczytywanie danych</h2>
-    <form @submit.prevent="submit">
-      <textarea class="text-box" v-model="textbox"></textarea>
+    <form id="myform" @submit.prevent="submit">
+      <textarea class="text-box" name="textBox" v-model="textbox"></textarea>
 
-      <input type="text" class="message-box" v-model="messagebox" disabled />
-      <!-- <input type="text" class="message-box" v-model="messagebox" readonly /> -->
+      <input type="text" class="message-box" name="message-box" v-model="messagebox" disabled />
 
       <div class="buttonbar">
         <button type="button" @click="clear">
@@ -52,14 +55,14 @@ function submit(e: Event): void {
           <i class="bi bi-save"></i>
         </PasteButton>
 
-        <button type="submit">
+        <button type="submit" :disabled="!datatype">
           <span>Zatwierdź</span>
           <i class="bi bi-check2"></i>
         </button>
       </div>
 
+      <h4>Template data</h4>
       <div class="buttonbar">
-        <h4>Template data</h4>
         <button type="button" @click="textbox = stany_ilosci">Wklej Stany ilościowe</button>
         <button type="button" @click="textbox = stany_ceny">Wklej Stany z cenami</button>
       </div>
@@ -96,3 +99,4 @@ form {
   grid-template-rows: 2fr;
 }
 </style>
+../DatabaseUpdateUtils/functions

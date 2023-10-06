@@ -5,7 +5,6 @@ export const useCurrentTabStore = defineStore(
   'currentTab',
   () => {
     const tabId = ref(0)
-
     return { tabId }
   },
   { persist: true }
