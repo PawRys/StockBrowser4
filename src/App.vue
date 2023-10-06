@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useCurrentTabStore } from '@/stores/currenttab'
 
-import ProductsList from './components/tabs/ProductsList.vue'
-import DatabaseShare from './components/tabs/DatabaseShare.vue'
-import DatabaseUpdate from './components/tabs/DatabaseUpdate.vue'
-import DatabaseManager from './components/tabs/DatabaseManager.vue'
+import ProductsList from './components/Tabs/ProductsList.vue'
+import DatabaseShare from './components/Tabs/DatabaseShare.vue'
+import DatabaseUpdate from './components/Tabs/DatabaseUpdate.vue'
+import DatabaseManager from './components/Tabs/DatabaseManager.vue'
 
 const tabs = [
   { comp: ProductsList, name: 'ProductsList', icon: '', label: 'Lista produktów' },
