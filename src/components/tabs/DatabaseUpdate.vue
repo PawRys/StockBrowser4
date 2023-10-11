@@ -30,10 +30,64 @@ function submit(e: Event): void {
   const form_textbox = form.elements.namedItem('textBox') as HTMLInputElement
   const array_data = convertToArray(form_textbox.value)
   const purified_data = removeGarbage(array_data, datatype.value)
-  stocks_store.products.push({ id: 'someid' })
-  console.log(array_data)
-  console.log(purified_data)
+  const formatted_data = formatData(purified_data, datatype.value)
+  console.log(formatted_data)
 }
+
+function formatData(data: string[][], datatype: string) {
+  let result = []
+  for (const row of data) {
+    const item = {} as Plywood
+    const plywoodSize = getSize(row[1])
+    const plywoodFootSize = getFootSize(plywoodSize)
+    const plywoodVolumeUnit = getVolumeUnit(row[2])
+
+    item.id = row[0]
+    item.name = row[1]
+    // item.unit = row[2]
+    item.group = 'null'
+    item.size = plywoodSize
+    item.foot = plywoodFootSize
+    if (datatype === 'prices') item.price = 0 // calcPrice()
+    if (datatype === 'stocks') item.stock = 0 // calcQuant()
+
+    result.push(item)
+  }
+  return result
+}
+
+function getSize(input: string) {
+  const match = input.match(/\d+([,.]\d+)?x\d{2,4}x\d{2,4}/i)
+  return match ? match[0] : undefined
+}
+
+function getFootSize(input: string | undefined) {
+  if (input === undefined) return
+  const numbers = input.split('x')
+  const A = Math.round(Number(numbers[1]) / 305)
+  const B = Math.round(Number(numbers[2]) / 305)
+  return A < B ? `${A}x${B}'` : `${B}x${A}'`
+}
+
+function getVolumeUnit(input: string) {
+  const match = input.match(/szt|m2|m3/i)
+  return match ? match[0] : undefined
+}
+
+const somearr = [
+  { id: 'one', name: 'one-name' }
+  // { id: 'two', name: 'two-name' }
+]
+console.log(somearr)
+
+somearr.splice(-1, 0, { id: 'tre', name: 'tre-name' })
+console.log(somearr)
+
+const findone = somearr.findIndex((row) => {
+  return row.id.match(/tre/)
+})
+
+console.log(findone)
 </script>
 
 <template>
