@@ -8,5 +8,5 @@ export const useStocks = defineStore(
 
     return { products }
   },
-  { persist: true }
+  { persist: false }
 )

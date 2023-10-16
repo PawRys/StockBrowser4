@@ -27,65 +27,55 @@ function clear() {
 }
 
 function submit(e: Event): void {
+  console.time('save to store')
   const form = e.target as HTMLFormElement
   const form_textbox = form.elements.namedItem('textBox') as HTMLInputElement
   const array_data = convertToArray(form_textbox.value)
   const purified_data = removeGarbage(array_data, datatype.value)
   // const formatted_data =
-  formatData(purified_data, datatype.value)
+  arrayIndexSaving(purified_data, datatype.value)
   // console.log(formatted_data)
+  console.timeEnd('save to store')
 }
 
-function formatData(data: string[][], datatype: string) {
-  console.time('save to store')
-  // let results = []
+function arrayIndexSaving(data: string[][], datatype: string) {
+  // const products = stocks_store.products
+  const products = JSON.parse(localStorage.stocks_store_v4 || '[]')
   for (const row of data) {
-    // const item = {} as Plywood
-
     const plywoodSize = getSize(row[1])
     const plywoodFootSize = getFootSize(plywoodSize)
     const plywoodVolumeUnit = getVolumeUnit(row[2])
 
-    const productIndex = stocks_store.products.findIndex((i) => i.id === row[0])
-    const i = productIndex < 0 ? stocks_store.products.length : productIndex
+    const productIndex = products.findIndex((i: Plywood) => i.id === row[0])
+    const i = productIndex < 0 ? products.length : productIndex
 
     if (productIndex < 0) {
-      stocks_store.products[i] = {} as Plywood /** create new product */
+      products[i] = {} as Plywood /** create new product */
     }
 
-    stocks_store.products[i].id = row[0]
-    stocks_store.products[i].name = row[1]
-    stocks_store.products[i].group = 'no data aviable'
-    stocks_store.products[i].size = plywoodSize
-    stocks_store.products[i].foot = plywoodFootSize
+    products[i].id = row[0]
+    products[i].name = row[1]
+    products[i].group = 'no data aviable'
+    products[i].size = plywoodSize
+    products[i].foot = plywoodFootSize
     if (datatype === 'prices') {
       const total_price = Number(row[5].replace(',', '.'))
       const total_stock = Number(row[3].replace(',', '.'))
       const unit_price = total_price / total_stock || 0
-      stocks_store.products[i].price = calcPrice(plywoodSize, unit_price, plywoodVolumeUnit, 'm3')
+      products[i].price = calcPrice(plywoodSize, unit_price, plywoodVolumeUnit, 'm3')
     }
     if (datatype === 'stocks') {
       const total_stock = Number(row[6].replace(',', '.'))
       const aviable_stock = Number(row[3].replace(',', '.'))
       const total_status = total_stock > 0 ? 1 : undefined
       const aviable_status = aviable_stock > 0 ? 2 : undefined
-      stocks_store.products[i].stock_total = calcQuant(
-        plywoodSize,
-        total_stock,
-        plywoodVolumeUnit,
-        'm3'
-      )
-      stocks_store.products[i].stock_aviable = calcQuant(
-        plywoodSize,
-        aviable_stock,
-        plywoodVolumeUnit,
-        'm3'
-      )
-      stocks_store.products[i].stock_status = aviable_status || total_status || 0
+      products[i].stock_total = calcQuant(plywoodSize, total_stock, plywoodVolumeUnit, 'm3')
+      products[i].stock_aviable = calcQuant(plywoodSize, aviable_stock, plywoodVolumeUnit, 'm3')
+      products[i].stock_status = aviable_status || total_status || 0
     }
   }
-  // return result
-  console.timeEnd('save to store')
+  stocks_store.products = products
+  localStorage.stocks_store_v4 = JSON.stringify(products)
 }
 
 function getSize(input: string) {
