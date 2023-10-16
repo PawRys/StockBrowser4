@@ -2,14 +2,15 @@
 import { ref, watch } from 'vue'
 import { useStocks } from '@/stores/stocks'
 import { defineDataType, convertToArray, removeGarbage } from '../Utils_DatabaseUpdate/functions'
+import { calcPrice, calcQuant } from '../Utils/functions'
 import { stany_ilosci } from '../Utils_DatabaseUpdate/stany-ilosci'
 import { stany_ceny } from '../Utils_DatabaseUpdate/stany-ceny'
 import PasteButton from '../Utils_DatabaseUpdate/PasteButton.vue'
 
 const stocks_store = useStocks()
-const textbox = ref('')
 const messagebox = ref('')
 const datatype = ref()
+const textbox = ref('')
 
 watch(textbox, () => {
   const { message, data } = defineDataType(textbox.value)
@@ -30,35 +31,66 @@ function submit(e: Event): void {
   const form_textbox = form.elements.namedItem('textBox') as HTMLInputElement
   const array_data = convertToArray(form_textbox.value)
   const purified_data = removeGarbage(array_data, datatype.value)
-  const formatted_data = formatData(purified_data, datatype.value)
-  console.log(formatted_data)
+  // const formatted_data =
+  formatData(purified_data, datatype.value)
+  // console.log(formatted_data)
 }
 
 function formatData(data: string[][], datatype: string) {
-  let result = []
+  console.time('save to store')
+  // let results = []
   for (const row of data) {
-    const item = {} as Plywood
+    // const item = {} as Plywood
+
     const plywoodSize = getSize(row[1])
     const plywoodFootSize = getFootSize(plywoodSize)
     const plywoodVolumeUnit = getVolumeUnit(row[2])
 
-    item.id = row[0]
-    item.name = row[1]
-    // item.unit = row[2]
-    item.group = 'null'
-    item.size = plywoodSize
-    item.foot = plywoodFootSize
-    if (datatype === 'prices') item.price = 0 // calcPrice()
-    if (datatype === 'stocks') item.stock = 0 // calcQuant()
+    const productIndex = stocks_store.products.findIndex((i) => i.id === row[0])
+    const i = productIndex < 0 ? stocks_store.products.length : productIndex
 
-    result.push(item)
+    if (productIndex < 0) {
+      stocks_store.products[i] = {} as Plywood /** create new product */
+    }
+
+    stocks_store.products[i].id = row[0]
+    stocks_store.products[i].name = row[1]
+    stocks_store.products[i].group = 'no data aviable'
+    stocks_store.products[i].size = plywoodSize
+    stocks_store.products[i].foot = plywoodFootSize
+    if (datatype === 'prices') {
+      const total_price = Number(row[5].replace(',', '.'))
+      const total_stock = Number(row[3].replace(',', '.'))
+      const unit_price = total_price / total_stock || 0
+      stocks_store.products[i].price = calcPrice(plywoodSize, unit_price, plywoodVolumeUnit, 'm3')
+    }
+    if (datatype === 'stocks') {
+      const total_stock = Number(row[6].replace(',', '.'))
+      const aviable_stock = Number(row[3].replace(',', '.'))
+      const total_status = total_stock > 0 ? 1 : undefined
+      const aviable_status = aviable_stock > 0 ? 2 : undefined
+      stocks_store.products[i].stock_total = calcQuant(
+        plywoodSize,
+        total_stock,
+        plywoodVolumeUnit,
+        'm3'
+      )
+      stocks_store.products[i].stock_aviable = calcQuant(
+        plywoodSize,
+        aviable_stock,
+        plywoodVolumeUnit,
+        'm3'
+      )
+      stocks_store.products[i].stock_status = aviable_status || total_status || 0
+    }
   }
-  return result
+  // return result
+  console.timeEnd('save to store')
 }
 
 function getSize(input: string) {
   const match = input.match(/\d+([,.]\d+)?x\d{2,4}x\d{2,4}/i)
-  return match ? match[0] : undefined
+  return match ? match[0].replace(/,/g, '.') : undefined
 }
 
 function getFootSize(input: string | undefined) {
@@ -74,13 +106,21 @@ function getVolumeUnit(input: string) {
   return match ? match[0] : undefined
 }
 
-const somearr = [
-  { id: 'one', name: 'one-name' }
-  // { id: 'two', name: 'two-name' }
+interface Myarr {
+  id: string
+  name?: string
+}
+
+const somearr: Myarr[] = [
+  { id: 'one', name: 'one-name' },
+  { id: 'two', name: 'two-name' }
 ]
 console.log(somearr)
 
-somearr.splice(-1, 0, { id: 'tre', name: 'tre-name' })
+// somearr.splice(1, 1, { id: 'tre' })
+somearr[2] = {} as Myarr
+somearr[2].id = 'tre'
+somearr[2].name = 'tre-name'
 console.log(somearr)
 
 const findone = somearr.findIndex((row) => {

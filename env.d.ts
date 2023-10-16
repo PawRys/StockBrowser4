@@ -7,6 +7,8 @@ interface Plywood {
   foot?: string
   group?: string
   price?: number
-  stock?: number
+  stock_total?: number
+  stock_aviable?: number
+  stock_status?: number
   invry?: string[]
 }
