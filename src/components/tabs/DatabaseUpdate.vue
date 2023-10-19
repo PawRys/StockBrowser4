@@ -32,9 +32,12 @@ function submit(e: Event): void {
   const form_textbox = form.elements.namedItem('textBox') as HTMLInputElement
   const array_data = convertToArray(form_textbox.value)
   const purified_data = removeGarbage(array_data, datatype.value)
-  // const formatted_data =
-  arrayIndexSaving(purified_data, datatype.value)
-  // console.log(formatted_data)
+  const formatted_data = arrayIndexSaving(purified_data, datatype.value)
+  console.log(
+    formatted_data
+      .filter((el: Plywood) => el.flags?.match(/china|euk/i))
+      .map((el: Plywood) => [el.flags, el.id, el.name].join(' - '))
+  )
   console.timeEnd('save to store')
 }
 
@@ -45,6 +48,7 @@ function arrayIndexSaving(data: string[][], datatype: string) {
     const plywoodSize = getSize(row[1])
     const plywoodFootSize = getFootSize(plywoodSize)
     const plywoodVolumeUnit = getVolumeUnit(row[2])
+    const searchString = `${row[1]} ${row[0]} `
 
     const productIndex = products.findIndex((i: Plywood) => i.id === row[0])
     const i = productIndex < 0 ? products.length : productIndex
@@ -55,6 +59,7 @@ function arrayIndexSaving(data: string[][], datatype: string) {
 
     products[i].id = row[0]
     products[i].name = row[1]
+    products[i].flags = [getGlueType(searchString), getProductType(searchString)].join(' ')
     products[i].group = 'no data aviable'
     products[i].size = plywoodSize
     products[i].foot = plywoodFootSize
@@ -74,8 +79,9 @@ function arrayIndexSaving(data: string[][], datatype: string) {
       products[i].stock_status = aviable_status || total_status || 0
     }
   }
-  stocks_store.products = products
+  // stocks_store.products = products
   localStorage.stocks_store_v4 = JSON.stringify(products)
+  return products
 }
 
 function getSize(input: string) {
@@ -96,28 +102,48 @@ function getVolumeUnit(input: string) {
   return match ? match[0] : undefined
 }
 
-interface Myarr {
-  id: string
-  name?: string
+function getGlueType(text: string): string {
+  const results = new Set()
+  if (/sucho|\bMR\b|\bINT\b/g.test(text)) {
+    results.add('MR')
+  }
+  if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) {
+    results.add('WD')
+  }
+  if (/lamin|foliowana|antypo/g.test(text)) {
+    results.add('WD')
+  }
+  if (/melamin|M\?M/g.test(text)) {
+    results.add('WD')
+  }
+  if (results.size === 0) {
+    results.add('WD/MR')
+  }
+  return Array.from(results).join(' ')
 }
 
-const somearr: Myarr[] = [
-  { id: 'one', name: 'one-name' },
-  { id: 'two', name: 'two-name' }
-]
-console.log(somearr)
+function getProductType(text: string): string {
+  if (/\bPQ\W?F\b/gi.test(text)) return 'PQF'
+  if (/\bPQ\b/gi.test(text)) return 'PQ'
+  if (/s11\/|kilo/gi.test(text)) return 'Kilo'
 
-// somearr.splice(1, 1, { id: 'tre' })
-somearr[2] = {} as Myarr
-somearr[2].id = 'tre'
-somearr[2].name = 'tre-name'
-console.log(somearr)
+  // te poniżej przenieść jako kolejna "warstwa" flag np gatunek (china, brzoza, igła, eukaliptus, radiata)
+  // if (/EUK/gi.test(text)) return 'Euk'
+  // if (/\bCH\b|topol/gi.test(text)) return 'China'
+  // if (/\bRP\b|radiata/gi.test(text)) return 'RP'
 
-const findone = somearr.findIndex((row) => {
-  return row.id.match(/tre/)
-})
+  if (/\bPF\b|poliform/gi.test(text)) return 'Poliform'
+  if (/\bPPL\b/gi.test(text)) return 'PPL'
 
-console.log(findone)
+  if (/\bF\/W\W?H\b|Heksa/gi.test(text)) return 'Heksa'
+  if (/\bF\/W\b|anty/gi.test(text)) return 'FW'
+
+  if (/\bM\/M\b|mel/gi.test(text)) return 'MM'
+  if (/\bF\/F\b|lamin|folio/gi.test(text)) return 'FF'
+
+  if (/sucho|MR|INT|wodo|WD|EXT/gi.test(text)) return 'Surowa'
+  return 'unknown'
+}
 </script>
 
 <template>

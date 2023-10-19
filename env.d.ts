@@ -5,6 +5,8 @@ interface Plywood {
   name?: string
   size?: string
   foot?: string
+  glue?: string
+  flags?: string
   group?: string
   price?: number
   stock_total?: number
