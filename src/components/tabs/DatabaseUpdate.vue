@@ -35,8 +35,8 @@ function submit(e: Event): void {
   const formatted_data = arrayIndexSaving(purified_data, datatype.value)
   console.log(
     formatted_data
-      .filter((el: Plywood) => el.flags?.match(/china|euk/i))
-      .map((el: Plywood) => [el.flags, el.id, el.name].join(' - '))
+      .filter((el: Plywood) => el.flags?.match(/.*/i))
+      .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
   )
   console.timeEnd('save to store')
 }
@@ -59,7 +59,12 @@ function arrayIndexSaving(data: string[][], datatype: string) {
 
     products[i].id = row[0]
     products[i].name = row[1]
-    products[i].flags = [getGlueType(searchString), getProductType(searchString)].join(' ')
+    products[i].flags = [
+      getColor(searchString),
+      getGlueType(searchString),
+      getProductType(searchString),
+      getWoodType(searchString)
+    ].join(' : ')
     products[i].group = 'no data aviable'
     products[i].size = plywoodSize
     products[i].foot = plywoodFootSize
@@ -103,23 +108,12 @@ function getVolumeUnit(input: string) {
 }
 
 function getGlueType(text: string): string {
-  const results = new Set()
-  if (/sucho|\bMR\b|\bINT\b/g.test(text)) {
-    results.add('MR')
-  }
-  if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) {
-    results.add('WD')
-  }
-  if (/lamin|foliowana|antypo/g.test(text)) {
-    results.add('WD')
-  }
-  if (/melamin|M\?M/g.test(text)) {
-    results.add('WD')
-  }
-  if (results.size === 0) {
-    results.add('WD/MR')
-  }
-  return Array.from(results).join(' ')
+  if (/sucho|\bMR\b|\bINT\b/g.test(text)) return 'MR'
+  if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) return 'WD'
+  if (/lamin|foliowana|antypo/g.test(text)) return 'WD'
+  if (/melamin|M\?M/g.test(text)) return 'WD'
+
+  return 'WD/MR'
 }
 
 function getProductType(text: string): string {
@@ -127,22 +121,67 @@ function getProductType(text: string): string {
   if (/\bPQ\b/gi.test(text)) return 'PQ'
   if (/s11\/|kilo/gi.test(text)) return 'Kilo'
 
-  // te poniżej przenieść jako kolejna "warstwa" flag np gatunek (china, brzoza, igła, eukaliptus, radiata)
-  // if (/EUK/gi.test(text)) return 'Euk'
-  // if (/\bCH\b|topol/gi.test(text)) return 'China'
-  // if (/\bRP\b|radiata/gi.test(text)) return 'RP'
-
   if (/\bPF\b|poliform/gi.test(text)) return 'Poliform'
   if (/\bPPL\b/gi.test(text)) return 'PPL'
 
   if (/\bF\/W\W?H\b|Heksa/gi.test(text)) return 'Heksa'
   if (/\bF\/W\b|anty/gi.test(text)) return 'FW'
 
+  if (/opal/gi.test(text)) return 'Opal White'
+  if (/honey/gi.test(text)) return 'Honey'
   if (/\bM\/M\b|mel/gi.test(text)) return 'MM'
   if (/\bF\/F\b|lamin|folio/gi.test(text)) return 'FF'
 
-  if (/sucho|MR|INT|wodo|WD|EXT/gi.test(text)) return 'Surowa'
-  return 'unknown'
+  if (/OSB/gi.test(text)) return 'OSB'
+
+  const regGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V)\b/
+  const expression = new RegExp(`${regGrade.source}/${regGrade.source}`, 'gi')
+  if (expression.test(text)) {
+    const grade = text.match(expression)
+    return grade ? grade[0] : 'zonk'
+  }
+  return '??/??'
+}
+
+function getWoodType(text: string): string {
+  const results = new Set()
+
+  if (/\bEUK\b|eukaliptus/gi.test(text)) results.add('Eukaliptus')
+  if (/\bTB\b|bintangor/gi.test(text)) results.add('Bintangor')
+  if (/\bCH\b|topol/gi.test(text)) results.add('Topolowa')
+  if (/\bRP\b|radiata/gi.test(text)) results.add('Radiata')
+  if (/pine/gi.test(text)) results.add('Sosnowa')
+  if (/liścia/gi.test(text)) results.add('Liściasta')
+  if (/iglasta/gi.test(text)) results.add('Iglasta')
+
+  return Array.from(results).join(' ')
+}
+
+function getColor(text: string): string {
+  const results = new Set()
+
+  if (/c\.less|trans|bezbarwna/gi.test(text)) results.add('C.less')
+  if (/d\.br|brązow[ya]|dark brown/gi.test(text)) results.add('D.brown')
+  if (/l\.br|jasn[yo] brąz|light brown/gi.test(text)) results.add('L.brown')
+  if (/white|biał[ya]/gi.test(text)) results.add('White')
+  if (/black|czarn[ya]/gi.test(text)) results.add('Black')
+  if (/grey|szar[ya]/gi.test(text)) results.add('Grey')
+  if (/l.grey|jasn[oa] szar[ya]|light gr[ea]y/gi.test(text)) results.add('L.grey')
+  if (/blue|niebiesk[ia]/gi.test(text)) results.add('Blue')
+  if (/green|zielon[ya]/gi.test(text)) results.add('Green')
+  if (/red|czerwon[ya]/gi.test(text)) results.add('Red')
+  if (/yell|zółt[ya]/gi.test(text)) results.add('Yellow')
+
+  if (results.size === 0) {
+    if (/M\/M/gi.test(text)) results.add('White')
+    if (/[FW]\/[FW]/gi.test(text)) results.add('D.brown')
+  }
+
+  if (results.size === 0) {
+    results.add('no color')
+  }
+
+  return Array.from(results).join(' ')
 }
 </script>
 
