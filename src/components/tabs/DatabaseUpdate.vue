@@ -35,8 +35,8 @@ function submit(e: Event): void {
   const formatted_data = arrayIndexSaving(purified_data, datatype.value)
   console.log(
     formatted_data
-      .filter((el: Plywood) => el.flags?.match(/.*/i))
-      .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
+    // .filter((el: Plywood) => el.flags?.match(/.*/i))
+    // .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
   )
   console.timeEnd('save to store')
 }
@@ -59,15 +59,12 @@ function arrayIndexSaving(data: string[][], datatype: string) {
 
     products[i].id = row[0]
     products[i].name = row[1]
-    products[i].flags = [
-      getColor(searchString),
-      getGlueType(searchString),
-      getProductType(searchString),
-      getWoodType(searchString)
-    ].join(' : ')
-    products[i].group = 'no data aviable'
+    products[i].color = getColor(searchString)
+    products[i].faceType = getFaceType(searchString)
+    products[i].glueType = getGlueType(searchString)
+    products[i].woodType = getWoodType(searchString)
     products[i].size = plywoodSize
-    products[i].foot = plywoodFootSize
+    products[i].footSize = plywoodFootSize
     if (datatype === 'prices') {
       const total_price = Number(row[5].replace(',', '.'))
       const total_stock = Number(row[3].replace(',', '.'))
@@ -116,7 +113,7 @@ function getGlueType(text: string): string {
   return 'WD/MR'
 }
 
-function getProductType(text: string): string {
+function getFaceType(text: string): string {
   if (/\bPQ\W?F\b/gi.test(text)) return 'PQF'
   if (/\bPQ\b/gi.test(text)) return 'PQ'
   if (/s11\/|kilo/gi.test(text)) return 'Kilo'
@@ -165,7 +162,7 @@ function getColor(text: string): string {
   if (/black|czarn[ya]/gi.test(text)) results.add('Black')
   if (/blue|niebiesk[ia]/gi.test(text)) results.add('Blue')
   if (/green|zielon[ya]/gi.test(text)) results.add('Green')
-  if (/red|czerwon[ya]/gi.test(text)) results.add('Red')
+  if (/\bred\b|czerwon[ya]/gi.test(text)) results.add('Red')
   if (/yell|zółt[ya]/gi.test(text)) results.add('Yellow')
   if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(d\.)?(br|brąz|brown)/gi.test(text)) results.add('D.brown')
   if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(br|brąz|brown)/gi.test(text)) results.add('L.brown')

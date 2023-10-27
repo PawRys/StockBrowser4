@@ -3,11 +3,12 @@
 interface Plywood {
   id: string
   name?: string
+  color?: string
+  faceType?: string
+  glueType?: string
+  woodType?: string
   size?: string
-  foot?: string
-  glue?: string
-  flags?: string
-  group?: string
+  footSize?: string
   price?: number
   stock_total?: number
   stock_aviable?: number
