@@ -161,16 +161,16 @@ function getColor(text: string): string {
   const results = new Set()
 
   if (/c\.less|trans|bezbarwna/gi.test(text)) results.add('C.less')
-  if (/d\.br|brązow[ya]|dark brown/gi.test(text)) results.add('D.brown')
-  if (/l\.br|jasn[yo] brąz|light brown/gi.test(text)) results.add('L.brown')
   if (/white|biał[ya]/gi.test(text)) results.add('White')
   if (/black|czarn[ya]/gi.test(text)) results.add('Black')
-  if (/grey|szar[ya]/gi.test(text)) results.add('Grey')
-  if (/l.grey|jasn[oa] szar[ya]|light gr[ea]y/gi.test(text)) results.add('L.grey')
   if (/blue|niebiesk[ia]/gi.test(text)) results.add('Blue')
   if (/green|zielon[ya]/gi.test(text)) results.add('Green')
   if (/red|czerwon[ya]/gi.test(text)) results.add('Red')
   if (/yell|zółt[ya]/gi.test(text)) results.add('Yellow')
+  if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(d\.)?(br|brąz|brown)/gi.test(text)) results.add('D.brown')
+  if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(br|brąz|brown)/gi.test(text)) results.add('L.brown')
+  if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('Grey')
+  if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('L.grey')
 
   if (results.size === 0) {
     if (/M\/M/gi.test(text)) results.add('White')
@@ -178,7 +178,7 @@ function getColor(text: string): string {
   }
 
   if (results.size === 0) {
-    results.add('no color')
+    results.add('not found')
   }
 
   return Array.from(results).join(' ')
