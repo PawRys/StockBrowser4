@@ -35,7 +35,10 @@ function submit(e: Event): void {
   const formatted_data = arrayIndexSaving(purified_data, datatype.value)
   console.log(
     formatted_data
-    // .filter((el: Plywood) => el.flags?.match(/.*/i))
+      .filter((el: Plywood) => el.glueType?.match(/()/i))
+      .filter((el: Plywood) => el.faceType?.match(/()/i))
+      .filter((el: Plywood) => el.footSize?.match(/(7x13)/i))
+      .filter((el: Plywood) => el.color?.match(/(grey)/i))
     // .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
   )
   console.timeEnd('save to store')
