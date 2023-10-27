@@ -37,8 +37,8 @@ function submit(e: Event): void {
     formatted_data
       .filter((el: Plywood) => el.glueType?.match(/()/i))
       .filter((el: Plywood) => el.faceType?.match(/()/i))
-      .filter((el: Plywood) => el.footSize?.match(/(7x13)/i))
-      .filter((el: Plywood) => el.color?.match(/(grey)/i))
+      .filter((el: Plywood) => el.footSize?.match(/()/i))
+      .filter((el: Plywood) => el.color?.match(/()/i))
     // .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
   )
   console.timeEnd('save to store')
@@ -46,7 +46,7 @@ function submit(e: Event): void {
 
 function arrayIndexSaving(data: string[][], datatype: string) {
   // const products = stocks_store.products
-  const products = JSON.parse(localStorage.stocks_store_v4 || '[]')
+  const products = JSON.parse(localStorage.SB4_products || '[]')
   for (const row of data) {
     const plywoodSize = getSize(row[1])
     const plywoodFootSize = getFootSize(plywoodSize)
@@ -85,7 +85,7 @@ function arrayIndexSaving(data: string[][], datatype: string) {
     }
   }
   // stocks_store.products = products
-  localStorage.stocks_store_v4 = JSON.stringify(products)
+  localStorage.SB4_products = JSON.stringify(products)
   return products
 }
 
@@ -167,10 +167,10 @@ function getColor(text: string): string {
   if (/green|zielon[ya]/gi.test(text)) results.add('Green')
   if (/\bred\b|czerwon[ya]/gi.test(text)) results.add('Red')
   if (/yell|zółt[ya]/gi.test(text)) results.add('Yellow')
-  if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(d\.)?(br|brąz|brown)/gi.test(text)) results.add('D.brown')
-  if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(br|brąz|brown)/gi.test(text)) results.add('L.brown')
   if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('Grey')
   if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('L.grey')
+  if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(d\.)?(br|brąz|brown)/gi.test(text)) results.add('D.brown')
+  if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(br|brąz|brown)/gi.test(text)) results.add('L.brown')
 
   if (results.size === 0) {
     if (/M\/M/gi.test(text)) results.add('White')
@@ -178,7 +178,7 @@ function getColor(text: string): string {
   }
 
   if (results.size === 0) {
-    results.add('not found')
+    results.add('no color')
   }
 
   return Array.from(results).join(' ')
