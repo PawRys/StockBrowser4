@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useStocks } from '@/stores/stocks'
-import { defineDataType, convertToArray, removeGarbage } from '../Utils_DatabaseUpdate/functions'
+import { defineDataType, convertToArray, removeGarbage } from '../DatabaseUpdate/functions'
 import { calcPrice, calcQuant } from '../Utils/functions'
-import { stany_ilosci } from '../Utils_DatabaseUpdate/stany-ilosci'
-import { stany_ceny } from '../Utils_DatabaseUpdate/stany-ceny'
-import PasteButton from '../Utils_DatabaseUpdate/PasteButton.vue'
+import { stany_ilosci } from '../DatabaseUpdate/stany-ilosci'
+import { stany_ceny } from '../DatabaseUpdate/stany-ceny'
+import PasteButton from '../DatabaseUpdate/PasteButton.vue'
 
 const stocks_store = useStocks()
 const messagebox = ref('')
