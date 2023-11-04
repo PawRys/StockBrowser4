@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCurrentTabStore } from '@/stores/currenttab'
+import { useCurrentTabStore } from '@/stores/currentTabStore'
 
 import ProductsList from './components/Tabs/ProductsList.vue'
 import DatabaseShare from './components/Tabs/DatabaseShare.vue'
@@ -28,3 +28,4 @@ const currentTab = useCurrentTabStore()
 </template>
 
 <style scoped></style>
+@/stores/currentTabStore
