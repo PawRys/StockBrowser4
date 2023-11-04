@@ -13,5 +13,5 @@ interface Plywood {
   stock_total?: number
   stock_aviable?: number
   stock_status?: number
-  invry?: string[]
+  inventory?: string[]
 }
