@@ -1,13 +1,35 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+// import { ref, computed } from 'vue'
+import { usePageStore } from '@/stores/paginationStore'
+import { useFilterStore } from '@/stores/filterStore'
+import { useStocksStore } from '@/stores/stocksStore'
+import Pagination from '../ProductsList/ProductPagination.vue'
+
+const pageStore = usePageStore()
+const filterStore = useFilterStore()
+const stocksStore = useStocksStore()
+</script>
 
 <template>
   <section id="products-list">
     <h2>Products</h2>
+    <h3>List length: {{ stocksStore.products.length }}</h3>
+    <input type="text" v-model="filterStore.filter" />
+    <h3>{{ filterStore.filter }}</h3>
+    <hr />
+    <Pagination />
     <ul>
-      <li>Item 1</li>
-      <li>Item 2</li>
-      <li>Item 3</li>
+      <li
+        v-for="(product, i) in stocksStore.products.slice(
+          pageStore.multiplier,
+          pageStore.multiplier + 10
+        )"
+        :key="product.id"
+      >
+        {{ i + 1 + pageStore.multiplier }}: {{ product.id }}
+      </li>
     </ul>
+    <Pagination />
   </section>
 </template>
 
