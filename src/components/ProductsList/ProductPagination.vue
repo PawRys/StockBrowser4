@@ -6,7 +6,7 @@ const pageSizeOptions = [10, 20, 50, 100]
 </script>
 
 <template>
-  <div class="pagination">
+  <div class="product-pagination">
     <button class="prev-page" @click="pageStore.prevPage">prev</button>
 
     <select name="set-current-page" id="set-current-page" @change="pageStore.setCurrentPage">
