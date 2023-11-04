@@ -1,25 +1,49 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import { ref, computed, watch } from 'vue'
+import { defineStore, storeToRefs } from 'pinia'
 import { useStocksStore } from '@/stores/stocksStore'
 
 export const usePageStore = defineStore(
-  'SB4_product-page',
+  'SB4_pageStore',
   () => {
     const stocksStore = useStocksStore()
-    const page = ref(1)
+    const { products } = storeToRefs(stocksStore)
+
+    const currentPage = ref(1)
     const pageSize = ref(10)
+    const pageCount = computed(() => Math.ceil(products.value.length / pageSize.value))
+    const currentPageFactor = computed(() => currentPage.value * pageSize.value - pageSize.value)
+    const nextPage = () => {
+      if (currentPage.value < pageCount.value) currentPage.value++
+    }
+    const prevPage = () => {
+      if (currentPage.value > 1) currentPage.value--
+    }
+    const setCurrentPage = (event: Event) => {
+      currentPage.value = Number((event.target as HTMLSelectElement).value)
+    }
+    const setPageSize = (event: Event) => {
+      pageSize.value = Number((event.target as HTMLSelectElement).value)
+    }
+    watch([products, pageSize], () => {
+      if (currentPage.value > pageCount.value) {
+        currentPage.value = pageCount.value
+      }
+    })
 
-    // const pageCount = computed(() => Math.ceil(stocksStore.products.lenght / pageSize.value))
-    const pageCount = computed(() => console.log(stocksStore.products, stocksStore.products.lenght))
-
-    const nextPage = () => pageCount.value
-    const prevPage = () => (page.value > 1 ? page.value-- : 1)
-    const multiplier = computed(() => page.value * pageSize.value - pageSize.value)
-
-    const setPage = () => false // tbd
-    const setPageSize = () => false //tbd
-
-    return { page, pageSize, nextPage, prevPage, multiplier, setPage, setPageSize }
+    return {
+      currentPage,
+      pageSize,
+      pageCount,
+      currentPageFactor,
+      nextPage,
+      prevPage,
+      setCurrentPage,
+      setPageSize
+    }
   },
-  { persist: false }
+  {
+    persist: {
+      paths: ['pageSize']
+    }
+  }
 )

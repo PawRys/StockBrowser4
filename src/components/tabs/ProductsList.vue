@@ -14,19 +14,19 @@ const stocksStore = useStocksStore()
   <section id="products-list">
     <h2>Products</h2>
     <h3>List length: {{ stocksStore.products.length }}</h3>
-    <input type="text" v-model="filterStore.filter" />
+    <input type="search" v-model="filterStore.filter" />
     <h3>{{ filterStore.filter }}</h3>
     <hr />
     <Pagination />
     <ul>
       <li
         v-for="(product, i) in stocksStore.products.slice(
-          pageStore.multiplier,
-          pageStore.multiplier + 10
+          pageStore.currentPageFactor,
+          pageStore.currentPageFactor + pageStore.pageSize
         )"
         :key="product.id"
       >
-        {{ i + 1 + pageStore.multiplier }}: {{ product.id }}
+        {{ i + 1 + pageStore.currentPageFactor }}: {{ product.id }} : {{ product.name }}
       </li>
     </ul>
     <Pagination />
