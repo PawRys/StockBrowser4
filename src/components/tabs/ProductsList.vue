@@ -1,12 +1,11 @@
 <script setup lang="ts">
 // import { ref, computed } from 'vue'
 import { usePageStore } from '@/stores/paginationStore'
-import { useFilterStore } from '@/stores/filterStore'
 import { useStocksStore } from '@/stores/stocksStore'
 import Pagination from '../ProductsList/ProductPagination.vue'
+import Filters from '../ProductsList/ProductFilters.vue'
 
 const pageStore = usePageStore()
-const filterStore = useFilterStore()
 const stocksStore = useStocksStore()
 </script>
 
@@ -14,8 +13,8 @@ const stocksStore = useStocksStore()
   <section id="products-list">
     <h2>Products</h2>
     <h3>List length: {{ stocksStore.products.length }}</h3>
-    <input type="search" v-model="filterStore.filter" />
-    <h3>{{ filterStore.filter }}</h3>
+    <hr />
+    <Filters />
     <hr />
     <Pagination />
     <ul>
