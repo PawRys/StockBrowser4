@@ -37,6 +37,7 @@ function submit(e: Event): void {
     formatted_data
       .filter((el: Plywood) => el.glueType?.match(/()/i))
       .filter((el: Plywood) => el.faceType?.match(/()/i))
+      .filter((el: Plywood) => el.woodType?.match(/()/i))
       .filter((el: Plywood) => el.footSize?.match(/()/i))
       .filter((el: Plywood) => el.color?.match(/()/i))
     // .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
@@ -148,12 +149,15 @@ function getWoodType(text: string): string {
 
   if (/\bEUK\b|eukaliptus/gi.test(text)) results.add('Eukaliptus')
   if (/\bTB\b|bintangor/gi.test(text)) results.add('Bintangor')
-  if (/\bCH\b|topol/gi.test(text)) results.add('Topolowa')
+  if (/\bCH\b|topol/gi.test(text)) results.add('Topola')
   if (/\bRP\b|radiata/gi.test(text)) results.add('Radiata')
-  if (/pine/gi.test(text)) results.add('Sosnowa')
+  if (/pine/gi.test(text)) results.add('Sosna')
   if (/liścia/gi.test(text)) results.add('Liściasta')
   if (/iglasta/gi.test(text)) results.add('Iglasta')
 
+  if (results.size === 0) {
+    results.add('bez gatunku')
+  }
   return Array.from(results).join(' ')
 }
 
