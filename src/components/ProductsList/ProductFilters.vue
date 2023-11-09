@@ -14,7 +14,7 @@ watch(products, () => {
   const tags: Set<string> = new Set()
   products.value.forEach((el: Plywood) => {
     // tags.add(el.woodType)
-    tags.add(el.faceType as string)
+    tags.add(el.attr?.faceType as string)
   })
 
   console.log(Array.from(tags).sort(collator.compare))

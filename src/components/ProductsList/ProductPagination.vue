@@ -9,7 +9,8 @@ const pageSizeOptions = [10, 20, 50, 100]
   <div class="product-pagination">
     <button class="prev-page" @click="pageStore.prevPage">prev</button>
 
-    <select name="set-current-page" id="set-current-page" @change="pageStore.setCurrentPage">
+    <button v-if="pageStore.pageCount === 1">1</button>
+    <select v-else name="set-current-page" id="set-current-page" @change="pageStore.setCurrentPage">
       <option
         v-for="page in pageStore.pageCount"
         :key="`pageCount-${page}`"

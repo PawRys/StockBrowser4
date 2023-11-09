@@ -34,12 +34,11 @@ function submit(e: Event): void {
   const purified_data = removeGarbage(array_data, datatype.value)
   const formatted_data = arrayIndexSaving(purified_data, datatype.value)
   console.log(
-    formatted_data
-      .filter((el: Plywood) => el.glueType?.match(/()/i))
-      .filter((el: Plywood) => el.faceType?.match(/()/i))
-      .filter((el: Plywood) => el.woodType?.match(/()/i))
-      .filter((el: Plywood) => el.footSize?.match(/()/i))
-      .filter((el: Plywood) => el.color?.match(/()/i))
+    formatted_data.filter((el: Plywood) => el.attr.sizeA?.match(/\b(6\.5)\b/gi))
+    // .filter((el: Plywood) => el.faceType?.match(/()/i))
+    // .filter((el: Plywood) => el.woodType?.match(/()/i))
+    // .filter((el: Plywood) => el.footSize?.match(/()/i))
+    // .filter((el: Plywood) => el.color?.match(/()/i))
     // .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
   )
   console.timeEnd('save to store')
@@ -63,12 +62,20 @@ function arrayIndexSaving(data: string[][], datatype: string) {
 
     products[i].id = row[0]
     products[i].name = row[1]
-    products[i].color = getColor(searchString)
-    products[i].faceType = getFaceType(searchString)
-    products[i].glueType = getGlueType(searchString)
-    products[i].woodType = getWoodType(searchString)
     products[i].size = plywoodSize
-    products[i].footSize = plywoodFootSize
+
+    products[i].attr = {
+      // size: plywoodSize,
+      sizeA: plywoodSize?.split('x')[0] || '0',
+      sizeB: plywoodSize?.split('x')[1] || '0',
+      sizeC: plywoodSize?.split('x')[2] || '0',
+      footSize: plywoodFootSize,
+      faceType: getFaceType(searchString),
+      glueType: getGlueType(searchString),
+      woodType: getWoodType(searchString),
+      color: getColor(searchString)
+    }
+
     if (datatype === 'prices') {
       const total_price = Number(row[5].replace(',', '.'))
       const total_stock = Number(row[3].replace(',', '.'))
