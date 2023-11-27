@@ -7,6 +7,7 @@ export const useStocksStore = defineStore(
   () => {
     const filterStore = useFilterStore()
     const products = computed(() => {
+      if (!localStorage.SB4_products) return []
       return JSON.parse(localStorage.SB4_products).filter((el: Plywood) =>
         `${el.id} ${el.name}`.match(new RegExp(filterStore.filter, 'gi'))
       )
