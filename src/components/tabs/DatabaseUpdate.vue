@@ -32,7 +32,7 @@ function submit(e: Event): void {
   const form_textbox = form.elements.namedItem('textBox') as HTMLInputElement
   const array_data = convertToArray(form_textbox.value)
   const purified_data = removeGarbage(array_data, datatype.value)
-  const formatted_data = arrayIndexSaving(purified_data, datatype.value)
+  const formatted_data = convertToObject(purified_data, datatype.value)
   console.log(
     formatted_data.filter((el: Plywood) => el.attr.sizeA?.match(/\b(6\.5)\b/gi))
     // .filter((el: Plywood) => el.faceType?.match(/()/i))
@@ -44,7 +44,8 @@ function submit(e: Event): void {
   console.timeEnd('save to store')
 }
 
-function arrayIndexSaving(data: string[][], datatype: string) {
+function convertToObject(data: string[][], datatype: string) {
+  /** Should move merging existing data with fresh data to stocksStore saveProducts method */
   // const products = stocks_store.products
   const products = JSON.parse(localStorage.SB4_products || '[]')
   for (const row of data) {

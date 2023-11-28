@@ -22,9 +22,8 @@ const currentTab = useCurrentTabStore()
       {{ tab.label }}
     </button>
   </div>
-  <Suspense>
-    <component :is="tabs[currentTab.tabId].comp" class="tab"></component>
-  </Suspense>
+  <component :is="tabs[currentTab.tabId].comp" class="tab"></component>
+  <Suspense> </Suspense>
 </template>
 
 <style scoped></style>

@@ -13,6 +13,11 @@ export const useStocksStore = defineStore(
       )
     })
 
+    function saveProducts(data: unknown) {
+      console.log(data)
+      /**  */
+    }
+
     return { products }
   },
   { persist: false }
