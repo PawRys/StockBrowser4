@@ -7,6 +7,11 @@ import { stany_ilosci } from '../DatabaseUpdate/stany-ilosci'
 import { stany_ceny } from '../DatabaseUpdate/stany-ceny'
 import PasteButton from '../DatabaseUpdate/PasteButton.vue'
 
+import { useStocksStore } from '@/stores/stocksStore'
+const stocksStore = useStocksStore()
+
+// console.log(stocksStore.test[10])
+
 // const stocks_store = useStocksStore()
 const messagebox = ref('')
 const datatype = ref()
@@ -33,8 +38,14 @@ function submit(e: Event): void {
   const array_data = convertToArray(form_textbox.value)
   const purified_data = removeGarbage(array_data, datatype.value)
   const formatted_data = convertToObject(purified_data, datatype.value)
+
+  /**
+   * Here add step where formatted_data is merged with database_data (localstorage data)
+   * */
+
   console.log(
-    formatted_data.filter((el: Plywood) => el.attr.sizeA?.match(/\b(6\.5)\b/gi))
+    formatted_data
+    // formatted_data.filter((el: Plywood) => el.attr.sizeA?.match(/\b(6\.5)\b/gi))
     // .filter((el: Plywood) => el.faceType?.match(/()/i))
     // .filter((el: Plywood) => el.woodType?.match(/()/i))
     // .filter((el: Plywood) => el.footSize?.match(/()/i))
@@ -44,57 +55,50 @@ function submit(e: Event): void {
   console.timeEnd('save to store')
 }
 
-function convertToObject(data: string[][], datatype: string) {
-  /** Should move merging existing data with fresh data to stocksStore saveProducts method */
-  // const products = stocks_store.products
-  const products = JSON.parse(localStorage.SB4_products || '[]')
+function convertToObject(data: string[][], datatype: string): Plywood[] {
+  /**
+   * Should move merging existing data with fresh data to stocksStore saveProducts method
+   * */
+  let products = []
   for (const row of data) {
+    const plywood = {} as Plywood
     const plywoodSize = getSize(row[1])
     const plywoodFootSize = getFootSize(plywoodSize)
     const plywoodVolumeUnit = getVolumeUnit(row[2])
     const searchString = `${row[1]} ${row[0]} `
 
-    const productIndex = products.findIndex((i: Plywood) => i.id === row[0])
-    const i = productIndex < 0 ? products.length : productIndex
-
-    if (productIndex < 0) {
-      products[i] = {} as Plywood /** create new product */
-    }
-
-    products[i].id = row[0]
-    products[i].name = row[1]
-    products[i].size = plywoodSize
-
-    products[i].attr = {
-      // size: plywoodSize,
-      sizeA: plywoodSize?.split('x')[0] || '0',
-      sizeB: plywoodSize?.split('x')[1] || '0',
-      sizeC: plywoodSize?.split('x')[2] || '0',
-      footSize: plywoodFootSize,
-      faceType: getFaceType(searchString),
-      glueType: getGlueType(searchString),
-      woodType: getWoodType(searchString),
-      color: getColor(searchString)
-    }
+    plywood.id = row[0]
+    plywood.name = row[1]
+    plywood.size = plywoodSize || 'plywoodSize_undefined'
+    plywood.attr.sizeA = plywoodSize?.split('x')[0] || '0'
+    plywood.attr.sizeB = plywoodSize?.split('x')[1] || '0'
+    plywood.attr.sizeC = plywoodSize?.split('x')[2] || '0'
+    plywood.attr.footSize = plywoodFootSize || 'plywoodFootSize_undefined'
+    plywood.attr.faceType = getFaceType(searchString)
+    plywood.attr.glueType = getGlueType(searchString)
+    plywood.attr.woodType = getWoodType(searchString)
+    plywood.attr.color = getColor(searchString)
 
     if (datatype === 'prices') {
       const total_price = Number(row[5].replace(',', '.'))
       const total_stock = Number(row[3].replace(',', '.'))
-      const unit_price = total_price / total_stock || 0
-      products[i].price = calcPrice(plywoodSize, unit_price, plywoodVolumeUnit, 'm3')
+      const calculation = total_price / total_stock
+      const unit_price = isFinite(calculation) ? calculation : 0
+      plywood.price = calcPrice(plywoodSize, unit_price, plywoodVolumeUnit, 'm3')
     }
+
     if (datatype === 'stocks') {
       const total_stock = Number(row[6].replace(',', '.'))
       const aviable_stock = Number(row[3].replace(',', '.'))
       const total_status = total_stock > 0 ? 1 : undefined
       const aviable_status = aviable_stock > 0 ? 2 : undefined
-      products[i].stock_total = calcQuant(plywoodSize, total_stock, plywoodVolumeUnit, 'm3')
-      products[i].stock_aviable = calcQuant(plywoodSize, aviable_stock, plywoodVolumeUnit, 'm3')
-      products[i].stock_status = aviable_status || total_status || 0
+      plywood.stock_total = calcQuant(plywoodSize, total_stock, plywoodVolumeUnit, 'm3')
+      plywood.stock_aviable = calcQuant(plywoodSize, aviable_stock, plywoodVolumeUnit, 'm3')
+      plywood.stock_status = aviable_status || total_status || 0
     }
+
+    products.push(plywood)
   }
-  // stocks_store.products = products
-  localStorage.SB4_products = JSON.stringify(products)
   return products
 }
 
