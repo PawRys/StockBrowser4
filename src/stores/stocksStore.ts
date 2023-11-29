@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 
@@ -13,12 +13,14 @@ export const useStocksStore = defineStore(
       )
     })
 
+    const test = ref(localStorage.SB4_products || [])
+
     function saveProducts(data: unknown) {
       console.log(data)
       /**  */
     }
 
-    return { products }
+    return { test, products, saveProducts }
   },
   { persist: false }
 )
