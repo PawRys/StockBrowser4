@@ -41,7 +41,7 @@ function submit(e: Event): void {
    * Here add step where formatted_data is merged with database_data (localstorage data)
    * */
   console.time('merge_data')
-  mergeData(formatted_data, unref(stocksStore.test))
+  mergeData(formatted_data, JSON.parse(localStorage.SB4_products || '[]'))
   console.timeEnd('merge_data')
   // console.log(stocksStore.test)
 
