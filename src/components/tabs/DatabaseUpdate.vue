@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, unref, watch } from 'vue'
+import { ref, watch } from 'vue'
 // import { useStocksStore } from '@/stores/stocks'
 import { defineDataType, convertToArray, removeGarbage } from '../DatabaseUpdate/functions'
 import { calcPrice, calcQuant } from '../Utils/functions'
@@ -10,7 +10,6 @@ import PasteButton from '../DatabaseUpdate/PasteButton.vue'
 import { useStocksStore } from '@/stores/stocksStore'
 const stocksStore = useStocksStore()
 
-// const stocks_store = useStocksStore()
 const messagebox = ref('')
 const datatype = ref()
 const textbox = ref('')
@@ -37,11 +36,12 @@ function submit(e: Event): void {
   const purified_data = removeGarbage(array_data, datatype.value)
   const formatted_data = convertToObject(purified_data, datatype.value)
 
-  /**
-   * Here add step where formatted_data is merged with database_data (localstorage data)
-   * */
   console.time('merge_data')
-  mergeData(formatted_data, JSON.parse(localStorage.SB4_products || '[]'))
+  // mergeData(formatted_data, JSON.parse(localStorage.SB4_products || '[]'))
+  const data = JSON.parse(stocksStore.test2 || '[]')
+  const mergedData = mergeData(formatted_data, data)
+  stocksStore.saveProducts(mergedData)
+  // localStorage.SB4_products = JSON.stringify(mergedData)
   console.timeEnd('merge_data')
   // console.log(stocksStore.test)
 
@@ -58,23 +58,17 @@ function submit(e: Event): void {
 }
 
 function mergeData(newData: Plywood[], databaseCopy: Plywood[]) {
-  /**
-   * - take ALL newData and assign to coresponding databaseCopy
-   * - create new objects in databaseCopy if necessary
-   * - return databaseCopy with mereged newData
-   */
-
   for (const plywood of newData) {
     const indexOfDatabaseCopy = databaseCopy.findIndex((item) => item.id === plywood.id)
+    console.log('update: ', indexOfDatabaseCopy)
+
     if (indexOfDatabaseCopy < 0) {
       databaseCopy.push(plywood)
     } else {
       Object.assign(databaseCopy[indexOfDatabaseCopy], plywood)
     }
   }
-
-  localStorage.SB4_products = JSON.stringify(databaseCopy)
-  // console.log(newData, databaseCopy)
+  return databaseCopy
 }
 
 function convertToObject(data: string[][], datatype: string): Plywood[] {
