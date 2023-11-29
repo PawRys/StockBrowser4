@@ -13,7 +13,7 @@ export const useStocksStore = defineStore(
       )
     })
 
-    const test = ref(localStorage.SB4_products || [])
+    const test = ref(JSON.parse(localStorage.SB4_products || '[]'))
 
     function saveProducts(data: unknown) {
       console.log(data)

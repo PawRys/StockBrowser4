@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, unref, watch } from 'vue'
 // import { useStocksStore } from '@/stores/stocks'
 import { defineDataType, convertToArray, removeGarbage } from '../DatabaseUpdate/functions'
 import { calcPrice, calcQuant } from '../Utils/functions'
@@ -9,8 +9,6 @@ import PasteButton from '../DatabaseUpdate/PasteButton.vue'
 
 import { useStocksStore } from '@/stores/stocksStore'
 const stocksStore = useStocksStore()
-
-// console.log(stocksStore.test[10])
 
 // const stocks_store = useStocksStore()
 const messagebox = ref('')
@@ -42,17 +40,41 @@ function submit(e: Event): void {
   /**
    * Here add step where formatted_data is merged with database_data (localstorage data)
    * */
+  console.time('merge_data')
+  mergeData(formatted_data, unref(stocksStore.test))
+  console.timeEnd('merge_data')
+  // console.log(stocksStore.test)
 
-  console.log(
-    formatted_data
-    // formatted_data.filter((el: Plywood) => el.attr.sizeA?.match(/\b(6\.5)\b/gi))
-    // .filter((el: Plywood) => el.faceType?.match(/()/i))
-    // .filter((el: Plywood) => el.woodType?.match(/()/i))
-    // .filter((el: Plywood) => el.footSize?.match(/()/i))
-    // .filter((el: Plywood) => el.color?.match(/()/i))
-    // .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
-  )
+  // console.log(
+  // formatted_data
+  // formatted_data.filter((el: Plywood) => el.attr.sizeA?.match(/\b(6\.5)\b/gi))
+  // .filter((el: Plywood) => el.faceType?.match(/()/i))
+  // .filter((el: Plywood) => el.woodType?.match(/()/i))
+  // .filter((el: Plywood) => el.footSize?.match(/()/i))
+  // .filter((el: Plywood) => el.color?.match(/()/i))
+  // .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
+  // )
   console.timeEnd('save to store')
+}
+
+function mergeData(newData: Plywood[], databaseCopy: Plywood[]) {
+  /**
+   * - take ALL newData and assign to coresponding databaseCopy
+   * - create new objects in databaseCopy if necessary
+   * - return databaseCopy with mereged newData
+   */
+
+  for (const plywood of newData) {
+    const indexOfDatabaseCopy = databaseCopy.findIndex((item) => item.id === plywood.id)
+    if (indexOfDatabaseCopy < 0) {
+      databaseCopy.push(plywood)
+    } else {
+      Object.assign(databaseCopy[indexOfDatabaseCopy], plywood)
+    }
+  }
+
+  localStorage.SB4_products = JSON.stringify(databaseCopy)
+  // console.log(newData, databaseCopy)
 }
 
 function convertToObject(data: string[][], datatype: string): Plywood[] {
@@ -70,6 +92,7 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     plywood.id = row[0]
     plywood.name = row[1]
     plywood.size = plywoodSize || 'plywoodSize_undefined'
+    plywood.attr = plywood.attr || {}
     plywood.attr.sizeA = plywoodSize?.split('x')[0] || '0'
     plywood.attr.sizeB = plywoodSize?.split('x')[1] || '0'
     plywood.attr.sizeC = plywoodSize?.split('x')[2] || '0'
@@ -108,7 +131,7 @@ function getSize(input: string) {
 }
 
 function getFootSize(input: string | undefined) {
-  if (input === undefined) return
+  if (input === undefined) return undefined
   const numbers = input.split('x')
   const A = Math.round(Number(numbers[1]) / 305)
   const B = Math.round(Number(numbers[2]) / 305)
@@ -147,8 +170,8 @@ function getFaceType(text: string): string {
 
   if (/OSB/gi.test(text)) return 'OSB'
 
-  const regGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V)\b/
-  const expression = new RegExp(`${regGrade.source}/${regGrade.source}`, 'gi')
+  const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V)\b/
+  const expression = new RegExp(`${regexpGrade.source}/${regexpGrade.source}`, 'gi')
   if (expression.test(text)) {
     const grade = text.match(expression)
     return grade ? grade[0] : 'zonk'
