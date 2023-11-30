@@ -37,13 +37,11 @@ function submit(e: Event): void {
   const formatted_data = convertToObject(purified_data, datatype.value)
 
   console.time('merge_data')
-  // mergeData(formatted_data, JSON.parse(localStorage.SB4_products || '[]'))
   const data = JSON.parse(stocksStore.test2 || '[]')
+  // const data = stocksStore.test2
   const mergedData = mergeData(formatted_data, data)
   stocksStore.saveProducts(mergedData)
-  // localStorage.SB4_products = JSON.stringify(mergedData)
   console.timeEnd('merge_data')
-  // console.log(stocksStore.test)
 
   // console.log(
   // formatted_data
@@ -60,8 +58,6 @@ function submit(e: Event): void {
 function mergeData(newData: Plywood[], databaseCopy: Plywood[]) {
   for (const plywood of newData) {
     const indexOfDatabaseCopy = databaseCopy.findIndex((item) => item.id === plywood.id)
-    console.log('update: ', indexOfDatabaseCopy)
-
     if (indexOfDatabaseCopy < 0) {
       databaseCopy.push(plywood)
     } else {
