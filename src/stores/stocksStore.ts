@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 
@@ -14,7 +14,10 @@ export const useStocksStore = defineStore(
     })
 
     const jso = JSON.parse(localStorage.SB4_products || '[]')
-    // const test2 = ref(jso)
+    // const test2 = reactive(jso)
+    /**
+     * Saving string into localstorage is way more performant
+     */
     const test2 = ref(localStorage.SB4_products)
 
     function saveProducts(data: unknown) {
