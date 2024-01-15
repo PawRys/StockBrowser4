@@ -11,7 +11,7 @@ export const usePageStore = defineStore(
     const currentPageNo = ref(1)
     const pageSize = ref(10)
     const pageCount = computed(() => Math.ceil(products.value.length / pageSize.value))
-    const firstOnPageNo = computed(() => currentPageNo.value * pageSize.value - pageSize.value)
+    const firstItemOnPage = computed(() => currentPageNo.value * pageSize.value - pageSize.value)
     const nextPage = () => {
       if (currentPageNo.value < pageCount.value) {
         currentPageNo.value++
@@ -40,7 +40,7 @@ export const usePageStore = defineStore(
       currentPageNo,
       pageSize,
       pageCount,
-      firstOnPageNo,
+      firstItemOnPage,
       nextPage,
       prevPage,
       setCurrentPage,
