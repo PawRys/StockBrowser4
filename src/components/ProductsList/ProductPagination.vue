@@ -15,7 +15,7 @@ const pageSizeOptions = [10, 20, 50, 100]
         v-for="page in pageStore.pageCount"
         :key="`pageCount-${page}`"
         :value="page"
-        :selected="page === pageStore.currentPage"
+        :selected="page === pageStore.currentPageNo"
       >
         {{ page }}
       </option>
