@@ -32,14 +32,14 @@ function submit(e: Event): void {
   console.time('save to store')
   const form = e.target as HTMLFormElement
   const form_textbox = form.elements.namedItem('textBox') as HTMLInputElement
-  const array_data = convertToArray(form_textbox.value)
-  const purified_data = removeGarbage(array_data, datatype.value)
-  const formatted_data = convertToObject(purified_data, datatype.value)
+  const data_as_array = convertToArray(form_textbox.value)
+  const data_as_array_purified = removeGarbage(data_as_array, datatype.value)
+  const data_in_final_shape = convertToObject(data_as_array_purified, datatype.value)
 
   console.time('merge_data')
-  const data = JSON.parse(stocksStore.test2 || '[]')
+  const data_from_localStorage = JSON.parse(stocksStore.test2 || '[]')
   // const data = stocksStore.test2
-  const mergedData = mergeData(formatted_data, data)
+  const mergedData = mergeData(data_in_final_shape, data_from_localStorage)
   stocksStore.saveProducts(mergedData)
   console.timeEnd('merge_data')
 
@@ -68,9 +68,6 @@ function mergeData(newData: Plywood[], databaseCopy: Plywood[]) {
 }
 
 function convertToObject(data: string[][], datatype: string): Plywood[] {
-  /**
-   * Should move merging existing data with fresh data to stocksStore saveProducts method
-   * */
   let products = []
   for (const row of data) {
     const plywood = {} as Plywood

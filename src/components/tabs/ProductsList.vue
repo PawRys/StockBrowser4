@@ -20,12 +20,12 @@ const stocksStore = useStocksStore()
     <ul>
       <li
         v-for="(product, i) in stocksStore.products.slice(
-          pageStore.firstOnPageNo,
-          pageStore.firstOnPageNo + pageStore.pageSize
+          pageStore.firstItemOnPage,
+          pageStore.firstItemOnPage + pageStore.pageSize
         )"
         :key="product.id"
       >
-        {{ pageStore.firstOnPageNo + i + 1 }}: {{ product.id }} : {{ product.name }}
+        {{ pageStore.firstItemOnPage + i + 1 }}: {{ product.id }} : {{ product.name }}
       </li>
     </ul>
     <Pagination />
