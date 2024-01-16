@@ -78,12 +78,12 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
 
     plywood.id = row[0]
     plywood.name = row[1]
-    plywood.size = plywoodSize || 'plywoodSize_undefined'
+    plywood.size = plywoodSize || 'size_undefined'
     plywood.attr = plywood.attr || {}
     plywood.attr.sizeA = plywoodSize?.split('x')[0] || '0'
     plywood.attr.sizeB = plywoodSize?.split('x')[1] || '0'
     plywood.attr.sizeC = plywoodSize?.split('x')[2] || '0'
-    plywood.attr.footSize = plywoodFootSize || 'plywoodFootSize_undefined'
+    plywood.attr.footSize = plywoodFootSize || 'footSize_undefined'
     plywood.attr.faceType = getFaceType(searchString)
     plywood.attr.glueType = getGlueType(searchString)
     plywood.attr.woodType = getWoodType(searchString)
