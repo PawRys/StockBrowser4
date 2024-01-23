@@ -77,7 +77,7 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     const searchString = `${row[1]} ${row[0]} `
 
     plywood.id = row[0]
-    plywood.name = row[1]
+    plywood.name = row[1] || 'name_undefined'
     plywood.size = plywoodSize || 'size_undefined'
     plywood.attr = plywood.attr || {}
     plywood.attr.sizeA = plywoodSize?.split('x')[0] || '0'
@@ -88,6 +88,7 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     plywood.attr.glueType = getGlueType(searchString)
     plywood.attr.woodType = getWoodType(searchString)
     plywood.attr.color = getColor(searchString)
+    plywood.stock_status = 0
 
     if (datatype === 'prices') {
       const total_price = Number(row[5].replace(',', '.'))
