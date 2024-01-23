@@ -42,16 +42,6 @@ function submit(e: Event): void {
   const mergedData = mergeData(data_in_final_shape, data_from_localStorage)
   stocksStore.saveProducts(mergedData)
   console.timeEnd('merge_data')
-
-  // console.log(
-  // formatted_data
-  // formatted_data.filter((el: Plywood) => el.attr.sizeA?.match(/\b(6\.5)\b/gi))
-  // .filter((el: Plywood) => el.faceType?.match(/()/i))
-  // .filter((el: Plywood) => el.woodType?.match(/()/i))
-  // .filter((el: Plywood) => el.footSize?.match(/()/i))
-  // .filter((el: Plywood) => el.color?.match(/()/i))
-  // .map((el: Plywood) => [el.flags, el.id, el.name].join(' | '))
-  // )
   console.timeEnd('save to store')
 }
 
@@ -72,7 +62,6 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
   for (const row of data) {
     const plywood = {} as Plywood
     const plywoodSize = getSize(row[1])
-    const plywoodFootSize = getFootSize(plywoodSize)
     const plywoodVolumeUnit = getVolumeUnit(row[2])
     const searchString = `${row[1]} ${row[0]} `
 
@@ -83,7 +72,7 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     plywood.attr.sizeA = plywoodSize?.split('x')[0] || '0'
     plywood.attr.sizeB = plywoodSize?.split('x')[1] || '0'
     plywood.attr.sizeC = plywoodSize?.split('x')[2] || '0'
-    plywood.attr.footSize = plywoodFootSize || 'footSize_undefined'
+    plywood.attr.footSize = getFootSize(plywoodSize) || 'footSize_undefined'
     plywood.attr.faceType = getFaceType(searchString)
     plywood.attr.glueType = getGlueType(searchString)
     plywood.attr.woodType = getWoodType(searchString)
@@ -132,12 +121,12 @@ function getVolumeUnit(input: string) {
 }
 
 function getGlueType(text: string): string {
-  if (/sucho|\bMR\b|\bINT\b/g.test(text)) return 'MR'
-  if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) return 'WD'
-  if (/lamin|foliowana|antypo/g.test(text)) return 'WD'
-  if (/melamin|M\?M/g.test(text)) return 'WD'
+  if (/sucho|\bMR\b|\bINT\b/g.test(text)) return 'INT/MR'
+  if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) return 'EXT/WD'
+  if (/lamin|foliowana|antypo/g.test(text)) return 'EXT/WD'
+  if (/melamin|M\?M/g.test(text)) return 'EXT/WD'
 
-  return 'WD/MR'
+  return 'nieznany'
 }
 
 function getFaceType(text: string): string {
@@ -162,9 +151,9 @@ function getFaceType(text: string): string {
   const expression = new RegExp(`${regexpGrade.source}/${regexpGrade.source}`, 'gi')
   if (expression.test(text)) {
     const grade = text.match(expression)
-    return grade ? grade[0] : 'zonk'
+    return grade ? grade[0] : '??/??'
   }
-  return '??/??'
+  return 'nieznany'
 }
 
 function getWoodType(text: string): string {
@@ -179,7 +168,7 @@ function getWoodType(text: string): string {
   if (/iglasta/gi.test(text)) results.add('Iglasta')
 
   if (results.size === 0) {
-    results.add('bez gatunku')
+    results.add('nieznany')
   }
   return Array.from(results).join(' ')
 }
@@ -205,7 +194,7 @@ function getColor(text: string): string {
   }
 
   if (results.size === 0) {
-    results.add('no color')
+    results.add('nieznany')
   }
 
   return Array.from(results).join(' ')
