@@ -64,19 +64,23 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     const plywoodSize = getSize(row[1])
     const plywoodVolumeUnit = getVolumeUnit(row[2])
     const searchString = `${row[1]} ${row[0]} `
+    const faceType_val = getFaceType(searchString)
+    const glueType_val = getGlueType(searchString)
+    const woodType_val = getWoodType(searchString)
+    const color_val = getColor(searchString, faceType_val)
 
     plywood.id = row[0]
     plywood.name = row[1] || '???'
     plywood.size = plywoodSize || '???'
     plywood.attr = plywood.attr || {}
-    plywood.attr.sizeA = plywoodSize?.split('x')[0] || '???'
-    plywood.attr.sizeB = plywoodSize?.split('x')[1] || '???'
-    plywood.attr.sizeC = plywoodSize?.split('x')[2] || '???'
+    plywood.attr.sizeT = plywoodSize?.split('x')[0] || '???'
+    plywood.attr.sizeA = plywoodSize?.split('x')[1] || '???'
+    plywood.attr.sizeB = plywoodSize?.split('x')[2] || '???'
     plywood.attr.footSize = getFootSize(plywoodSize) || '???'
-    plywood.attr.faceType = getFaceType(searchString)
-    plywood.attr.glueType = getGlueType(searchString)
-    plywood.attr.woodType = getWoodType(searchString)
-    plywood.attr.color = getColor(searchString)
+    plywood.attr.faceType = faceType_val
+    plywood.attr.glueType = glueType_val
+    plywood.attr.woodType = woodType_val
+    plywood.attr.color = color_val
     plywood.stock_status = 0
 
     if (datatype === 'prices') {
@@ -89,11 +93,11 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
 
     if (datatype === 'stocks') {
       const total_stock = Number(row[6].replace(',', '.'))
-      const aviable_stock = Number(row[3].replace(',', '.'))
       const total_status = total_stock > 0 ? 1 : undefined
+      const aviable_stock = Number(row[3].replace(',', '.'))
       const aviable_status = aviable_stock > 0 ? 2 : undefined
-      plywood.stock_total = calcQuant(plywoodSize, total_stock, plywoodVolumeUnit, 'm3')
-      plywood.stock_aviable = calcQuant(plywoodSize, aviable_stock, plywoodVolumeUnit, 'm3')
+      plywood.total_stock = calcQuant(plywoodSize, total_stock, plywoodVolumeUnit, 'm3')
+      plywood.aviable_stock = calcQuant(plywoodSize, aviable_stock, plywoodVolumeUnit, 'm3')
       plywood.stock_status = aviable_status || total_status || 0
     }
 
@@ -135,14 +139,18 @@ function getFaceType(text: string): string {
   /*3*/ if (/s11\/|kilo/gi.test(text)) return 'Kilo'
 
   /*4*/ if (/\bF\/W\W?H\b|Heksa/gi.test(text)) return 'Heksa'
-  /*4*/ if (/honey/gi.test(text)) return 'Honey'
+  /*4*/ if (/\bhoney\b/gi.test(text)) return 'Honey'
   /*4*/ if (/\bM\/M\b|mel/gi.test(text)) return 'M/M'
-  /*4*/ if (/opal/gi.test(text)) return 'Opal White'
+  /*4*/ if (/\bopal\b/gi.test(text)) return 'Opal White'
   /*4*/ if (/\bPF\b|poliform/gi.test(text)) return 'Poliform'
   /*4*/ if (/\bPPL\b/gi.test(text)) return 'PPL'
 
-  /*5*/ if (/\bF\/F\b|lamin|folio/gi.test(text)) return 'F/F'
-  /*5*/ if (/\bF\/W\b|anty/gi.test(text)) return 'F/W'
+  // /*5*/ if (/s12|s13|\bF\/F\b|lamin|folio/gi.test(text)) return 'F/F'
+  // /*5*/ if (/s14|s15|\bF\/W\b|anty/gi.test(text)) return 'F/W'
+  // /*5*/ if (/s16|s17|\bW\/W\b/gi.test(text)) return 'W/W'
+  /*5*/ if (/s12|s13/gi.test(text)) return 'F/F'
+  /*5*/ if (/s14|s15/gi.test(text)) return 'F/W'
+  /*5*/ if (/s16|s17/gi.test(text)) return 'W/W'
   /*5*/ if (/OSB/gi.test(text)) return 'OSB'
 
   const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V)\b/
@@ -171,7 +179,7 @@ function getWoodType(text: string): string {
   return Array.from(results).join(' ')
 }
 
-function getColor(text: string): string {
+function getColor(text: string, faceType: string): string {
   const results = new Set()
 
   if (/yell|zółt[ya]/gi.test(text)) results.add('Yellow')
@@ -188,8 +196,20 @@ function getColor(text: string): string {
 
   /* Apply defaults if no color specified */
   if (results.size === 0) {
-    if (/M\/M/gi.test(text)) results.add('White')
-    if (/[FW]\/[FW]/gi.test(text)) results.add('D.brown')
+    if (faceType === 'F/F') results.add('D.brown')
+    if (faceType === 'W/W') results.add('D.brown')
+    if (faceType === 'F/W') results.add('D.brown')
+    if (faceType === 'Heksa') results.add('D.brown')
+    if (faceType === 'Honey') results.add('Honey')
+    if (faceType === 'M/M') results.add('White')
+    if (faceType === 'Opal White') results.add('Opal')
+
+    if (faceType === 'Poliform') results.add('inny')
+    if (faceType === 'PPL') results.add('inny')
+    if (faceType === 'PQF') results.add('inny')
+  }
+  if (results.size === 0) {
+    if (faceType !== '???') results.add('surowa')
   }
   if (results.size === 0) {
     results.add('???')

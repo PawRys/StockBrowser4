@@ -1,4 +1,4 @@
-import { ref, reactive, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 
@@ -8,14 +8,12 @@ export const useStocksStore = defineStore(
     const filterStore = useFilterStore()
     const products = computed(() => {
       if (!localStorage.SB4_products) return []
-      return JSON.parse(localStorage.SB4_products).filter(
-        (el: Plywood) =>
-          // `${el.id} ${el.name}`.match(new RegExp(filterStore.filter, 'gi'))
-          el.attr.faceType?.match(/honey/i)
-      )
+      return JSON.parse(localStorage.SB4_products)
+        .filter((el: Plywood) => `${el.id} ${el.name}`.match(new RegExp(filterStore.filter, 'gi')))
+        .filter((el: Plywood) => el.stock_status >= 0)
     })
 
-    const jso = JSON.parse(localStorage.SB4_products || '[]')
+    // const jso = JSON.parse(localStorage.SB4_products || '[]')
     // const test2 = reactive(jso)
     /**
      * Saving string into localstorage is way more performant

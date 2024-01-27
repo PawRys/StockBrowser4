@@ -5,19 +5,19 @@ type Plywood = {
   name: string
   size: string
   attr: {
-    sizeA?: string
-    sizeB?: string
-    sizeC?: string
-    color?: string
-    faceType?: string
-    footSize?: string
-    glueType?: string
-    woodType?: string
+    sizeT: string
+    sizeA: string
+    sizeB: string
+    color: string
+    faceType: string
+    footSize: string
+    glueType: string
+    woodType: string
   }
   price?: number
-  stock_total?: number
-  stock_aviable?: number
-  stock_status?: number
+  total_stock?: number
+  aviable_stock?: number
+  stock_status: number
   inventory?: string[]
 }
 
@@ -26,9 +26,9 @@ type Plywood = {
 //   name: string
 //   size: string
 //   attr: {
+//     sizeT?: string
 //     sizeA?: string
 //     sizeB?: string
-//     sizeC?: string
 //     color?: string
 //     faceType?: string
 //     footSize?: string
@@ -36,8 +36,8 @@ type Plywood = {
 //     woodType?: string
 //   }
 //   price?: number
-//   stock_total?: number
-//   stock_aviable?: number
+//   total_stock?: number
+//   aviable_stock?: number
 //   stock_status?: number
 //   inventory?: string[]
 // }
