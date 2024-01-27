@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 
@@ -12,6 +12,14 @@ export const useStocksStore = defineStore(
         .filter((el: Plywood) => `${el.id} ${el.name}`.match(new RegExp(filterStore.filter, 'gi')))
         .filter((el: Plywood) => el.stock_status >= 0)
     })
+
+    watch(
+      filterStore.tags,
+      () => {
+        console.log(filterStore.tags)
+      },
+      { immediate: true }
+    )
 
     // const jso = JSON.parse(localStorage.SB4_products || '[]')
     // const test2 = reactive(jso)

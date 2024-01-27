@@ -197,8 +197,8 @@ function getColor(text: string, faceType: string): string {
   /* Apply defaults if no color specified */
   if (results.size === 0) {
     if (faceType === 'F/F') results.add('D.brown')
-    if (faceType === 'W/W') results.add('D.brown')
     if (faceType === 'F/W') results.add('D.brown')
+    if (faceType === 'W/W') results.add('D.brown')
     if (faceType === 'Heksa') results.add('D.brown')
     if (faceType === 'Honey') results.add('Honey')
     if (faceType === 'M/M') results.add('White')

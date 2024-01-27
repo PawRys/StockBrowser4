@@ -46,136 +46,188 @@ watch(
       el.attr?.woodType?.split(' ').map((el) => woodType_tags.add(el))
     })
 
-    console.log([
-      Array.from(sizeT_tags).sort(collator.compare),
-      Array.from(sizeA_tags).sort(collator.compare),
-      Array.from(sizeB_tags).sort(collator.compare),
-      Array.from(color_tags).sort(collator.compare),
-      Array.from(faceType_tags).sort(collator.compare),
-      Array.from(footSize_tags).sort(collator.compare),
-      Array.from(glueType_tags).sort(collator.compare),
-      Array.from(woodType_tags).sort(collator.compare)
-    ])
+    // console.log([
+    //   Array.from(sizeT_tags).sort(collator.compare),
+    //   Array.from(sizeA_tags).sort(collator.compare),
+    //   Array.from(sizeB_tags).sort(collator.compare),
+    //   Array.from(color_tags).sort(collator.compare),
+    //   Array.from(faceType_tags).sort(collator.compare),
+    //   Array.from(footSize_tags).sort(collator.compare),
+    //   Array.from(glueType_tags).sort(collator.compare),
+    //   Array.from(woodType_tags).sort(collator.compare)
+    // ])
   },
   { immediate: true }
 )
+
+function applyFilters(e: Event) {
+  const formElement = e.target as HTMLFormElement
+  const formData = new FormData(formElement)
+
+  filterStore.tags = Object.fromEntries(
+    Array.from(formData.keys()).map((key) => [
+      key,
+      formData.getAll(key).length > 1 ? formData.getAll(key) : formData.get(key)
+    ])
+  )
+  console.log(filterStore.tags)
+}
 </script>
 
 <template>
+  <input type="checkbox" name="fruits" value="apple" />
+  <input type="checkbox" name="fruits" value="plum" />
+
   <div class="product-filters">
     <h2>Filtry</h2>
     <input type="search" v-model="filterStore.filter" />
     <h3>{{ filterStore.filter }}</h3>
-    <form id="tag-list">
-      <fieldset>
-        <h4>Lico</h4>
-        <template
-          v-for="item of Array.from(faceType_tags).sort(collator.compare)"
-          :key="`faceType-${escapeNonWordChars(item)}`"
-        >
-          <label :for="`faceType-${escapeNonWordChars(item)}`">
-            <input type="checkbox" name="faceType" :id="`faceType-${escapeNonWordChars(item)}`" />
-            {{ item }}
-          </label>
-        </template>
-      </fieldset>
-
-      <fieldset>
-        <h4>Kolor</h4>
-        <template
-          v-for="item of Array.from(color_tags).sort(collator.compare)"
-          :key="`color-${escapeNonWordChars(item)}`"
-        >
-          <label :for="`color-${escapeNonWordChars(item)}`">
-            <input type="checkbox" name="color" :id="`color-${escapeNonWordChars(item)}`" />
-            {{ item }}
-          </label>
-        </template>
-      </fieldset>
-
-      <fieldset>
-        <h4>Grubość</h4>
-        <template
-          v-for="item of Array.from(sizeT_tags).sort(collator.compare)"
-          :key="`sizeT-${escapeNonWordChars(item)}`"
-        >
-          <label :for="`sizeT-${escapeNonWordChars(item)}`">
-            <input type="checkbox" name="sizeT" :id="`sizeT-${escapeNonWordChars(item)}`" />
-            {{ item }}
-          </label>
-        </template>
-      </fieldset>
-
-      <fieldset>
-        <h4>Rozmiar</h4>
-        <template
-          v-for="item of Array.from(footSize_tags).sort(collator.compare)"
-          :key="`footSize-${escapeNonWordChars(item)}`"
-        >
-          <label :for="`footSize-${escapeNonWordChars(item)}`">
-            <input type="checkbox" name="footSize" :id="`footSize-${escapeNonWordChars(item)}`" />
-            {{ item }}
-          </label>
-        </template>
-      </fieldset>
-
-      <fieldset>
-        <h4>Wym A</h4>
-        <template
-          v-for="item of Array.from(sizeA_tags).sort(collator.compare)"
-          :key="`sizeA-${escapeNonWordChars(item)}`"
-        >
-          <label :for="`sizeA-${escapeNonWordChars(item)}`">
-            <input type="checkbox" name="sizeA" :id="`sizeA-${escapeNonWordChars(item)}`" />
-            {{ item }}
-          </label>
-        </template>
-      </fieldset>
-
-      <fieldset>
-        <h4>Wym B</h4>
-        <template
-          v-for="item of Array.from(sizeB_tags).sort(collator.compare)"
-          :key="`sizeB-${escapeNonWordChars(item)}`"
-        >
-          <label :for="`sizeB-${escapeNonWordChars(item)}`">
-            <input type="checkbox" name="sizeB" :id="`sizeB-${escapeNonWordChars(item)}`" />
-            {{ item }}
-          </label>
-        </template>
-      </fieldset>
-
-      <fieldset>
-        <h4>Gatunek</h4>
-        <template
-          v-for="item of Array.from(woodType_tags).sort(collator.compare)"
-          :key="`woodType-${escapeNonWordChars(item)}`"
-        >
-          <label :for="`woodType-${escapeNonWordChars(item)}`">
-            <input type="checkbox" name="woodType" :id="`woodType-${escapeNonWordChars(item)}`" />
-            {{ item }}
-          </label>
-        </template>
-      </fieldset>
-
-      <fieldset>
-        <h4>Klej</h4>
-        <template
-          v-for="item of Array.from(glueType_tags).sort(collator.compare)"
-          :key="`glueType-${escapeNonWordChars(item)}`"
-        >
-          <label :for="`glueType-${escapeNonWordChars(item)}`">
-            <input type="checkbox" name="glueType" :id="`glueType-${escapeNonWordChars(item)}`" />
-            {{ item }}
-          </label>
-        </template>
-      </fieldset>
+    <form id="tag-list" @submit.prevent="applyFilters">
+      <input type="submit" value="Filtruj" />
+      <div class="display-columns">
+        <fieldset>
+          <h4>Lico</h4>
+          <template
+            v-for="item of Array.from(faceType_tags).sort(collator.compare)"
+            :key="`faceType-${escapeNonWordChars(item)}`"
+          >
+            <label :for="`faceType-${escapeNonWordChars(item)}`">
+              <input
+                :value="item"
+                type="checkbox"
+                name="faceType"
+                :id="`faceType-${escapeNonWordChars(item)}`"
+              />
+              {{ item }}
+            </label>
+          </template>
+        </fieldset>
+        <fieldset>
+          <h4>Kolor</h4>
+          <template
+            v-for="item of Array.from(color_tags).sort(collator.compare)"
+            :key="`color-${escapeNonWordChars(item)}`"
+          >
+            <label :for="`color-${escapeNonWordChars(item)}`">
+              <input
+                :value="item"
+                type="checkbox"
+                name="color"
+                :id="`color-${escapeNonWordChars(item)}`"
+              />
+              {{ item }}
+            </label>
+          </template>
+        </fieldset>
+        <fieldset>
+          <h4>Grubość</h4>
+          <template
+            v-for="item of Array.from(sizeT_tags).sort(collator.compare)"
+            :key="`sizeT-${escapeNonWordChars(item)}`"
+          >
+            <label :for="`sizeT-${escapeNonWordChars(item)}`">
+              <input
+                :value="item"
+                type="checkbox"
+                name="sizeT"
+                :id="`sizeT-${escapeNonWordChars(item)}`"
+              />
+              {{ item }}
+            </label>
+          </template>
+        </fieldset>
+        <fieldset>
+          <h4>Rozmiar</h4>
+          <template
+            v-for="item of Array.from(footSize_tags).sort(collator.compare)"
+            :key="`footSize-${escapeNonWordChars(item)}`"
+          >
+            <label :for="`footSize-${escapeNonWordChars(item)}`">
+              <input
+                :value="item"
+                type="checkbox"
+                name="footSize"
+                :id="`footSize-${escapeNonWordChars(item)}`"
+              />
+              {{ item }}
+            </label>
+          </template>
+        </fieldset>
+        <fieldset>
+          <h4>Wym A</h4>
+          <template
+            v-for="item of Array.from(sizeA_tags).sort(collator.compare)"
+            :key="`sizeA-${escapeNonWordChars(item)}`"
+          >
+            <label :for="`sizeA-${escapeNonWordChars(item)}`">
+              <input
+                :value="item"
+                type="checkbox"
+                name="sizeA"
+                :id="`sizeA-${escapeNonWordChars(item)}`"
+              />
+              {{ item }}
+            </label>
+          </template>
+        </fieldset>
+        <fieldset>
+          <h4>Wym B</h4>
+          <template
+            v-for="item of Array.from(sizeB_tags).sort(collator.compare)"
+            :key="`sizeB-${escapeNonWordChars(item)}`"
+          >
+            <label :for="`sizeB-${escapeNonWordChars(item)}`">
+              <input
+                :value="item"
+                type="checkbox"
+                name="sizeB"
+                :id="`sizeB-${escapeNonWordChars(item)}`"
+              />
+              {{ item }}
+            </label>
+          </template>
+        </fieldset>
+        <fieldset>
+          <h4>Gatunek</h4>
+          <template
+            v-for="item of Array.from(woodType_tags).sort(collator.compare)"
+            :key="`woodType-${escapeNonWordChars(item)}`"
+          >
+            <label :for="`woodType-${escapeNonWordChars(item)}`">
+              <input
+                :value="item"
+                type="checkbox"
+                name="woodType"
+                :id="`woodType-${escapeNonWordChars(item)}`"
+              />
+              {{ item }}
+            </label>
+          </template>
+        </fieldset>
+        <fieldset>
+          <h4>Klej</h4>
+          <template
+            v-for="item of Array.from(glueType_tags).sort(collator.compare)"
+            :key="`glueType-${escapeNonWordChars(item)}`"
+          >
+            <label :for="`glueType-${escapeNonWordChars(item)}`">
+              <input
+                :value="item"
+                type="checkbox"
+                name="glueType"
+                :id="`glueType-${escapeNonWordChars(item)}`"
+              />
+              {{ item }}
+            </label>
+          </template>
+        </fieldset>
+      </div>
     </form>
   </div>
 </template>
 
 <style scoped>
-#tag-list {
+.display-columns {
   display: flex;
 }
 

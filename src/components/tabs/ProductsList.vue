@@ -7,7 +7,7 @@ import Filters from '../ProductsList/ProductFilters.vue'
 
 const pageStore = usePageStore()
 const stocksStore = useStocksStore()
-console.log(stocksStore.products)
+// console.log(stocksStore.products)
 </script>
 
 <template>
