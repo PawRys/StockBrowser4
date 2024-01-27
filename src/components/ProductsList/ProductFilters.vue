@@ -3,6 +3,7 @@ import { watch } from 'vue'
 import { useFilterStore } from '@/stores/filterStore'
 import { useStocksStore } from '@/stores/stocksStore'
 import { storeToRefs } from 'pinia'
+import { escapeNonWordChars } from '../Utils/functions'
 
 const filterStore = useFilterStore()
 const stocksStore = useStocksStore()
@@ -25,20 +26,16 @@ const woodType_tags: Set<string> = new Set()
 watch(
   products,
   () => {
-    // const tags: Set<string> = new Set()
-
     products.value.forEach((el: Plywood) => {
       sizeA_tags.add(el.attr?.sizeA as string)
       sizeB_tags.add(el.attr?.sizeB as string)
       sizeC_tags.add(el.attr?.sizeC as string)
-      color_tags.add(el.attr?.color as string)
+      el.attr?.color?.split(' ').map((el) => color_tags.add(el))
       faceType_tags.add(el.attr?.faceType as string)
       footSize_tags.add(el.attr?.footSize as string)
       glueType_tags.add(el.attr?.glueType as string)
-      woodType_tags.add(el.attr?.woodType as string)
+      el.attr?.woodType?.split(' ').map((el) => woodType_tags.add(el))
     })
-
-    // console.log(Array.from(tags).sort(collator.compare))
 
     console.log([
       Array.from(sizeA_tags).sort(collator.compare),
@@ -62,11 +59,15 @@ watch(
     <h3>{{ filterStore.filter }}</h3>
     <form>
       <fieldset>
+        <h4>Lico</h4>
         <template
           v-for="item of Array.from(faceType_tags).sort(collator.compare)"
-          :key="`tag-${item}`"
+          :key="`tag-${escapeNonWordChars(item)}`"
         >
-          <label :for="`tag-${item}`"><input type="checkbox" name="" id="" />{{ item }}</label>
+          <label :for="`tag-${escapeNonWordChars(item)}`">
+            <input type="checkbox" name="" id="" />
+            {{ item }}
+          </label>
         </template>
       </fieldset>
     </form>

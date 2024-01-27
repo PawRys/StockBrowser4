@@ -66,13 +66,13 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     const searchString = `${row[1]} ${row[0]} `
 
     plywood.id = row[0]
-    plywood.name = row[1] || 'name_undefined'
-    plywood.size = plywoodSize || 'size_undefined'
+    plywood.name = row[1] || '???'
+    plywood.size = plywoodSize || '???'
     plywood.attr = plywood.attr || {}
-    plywood.attr.sizeA = plywoodSize?.split('x')[0] || '0'
-    plywood.attr.sizeB = plywoodSize?.split('x')[1] || '0'
-    plywood.attr.sizeC = plywoodSize?.split('x')[2] || '0'
-    plywood.attr.footSize = getFootSize(plywoodSize) || 'footSize_undefined'
+    plywood.attr.sizeA = plywoodSize?.split('x')[0] || '???'
+    plywood.attr.sizeB = plywoodSize?.split('x')[1] || '???'
+    plywood.attr.sizeC = plywoodSize?.split('x')[2] || '???'
+    plywood.attr.footSize = getFootSize(plywoodSize) || '???'
     plywood.attr.faceType = getFaceType(searchString)
     plywood.attr.glueType = getGlueType(searchString)
     plywood.attr.woodType = getWoodType(searchString)
@@ -121,31 +121,29 @@ function getVolumeUnit(input: string) {
 }
 
 function getGlueType(text: string): string {
-  if (/sucho|\bMR\b|\bINT\b/g.test(text)) return 'INT/MR'
-  if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) return 'EXT/WD'
-  if (/lamin|foliowana|antypo/g.test(text)) return 'EXT/WD'
-  if (/melamin|M\?M/g.test(text)) return 'EXT/WD'
-
-  return 'nieznany'
+  if (/sucho|\bMR\b|\bINT\b/g.test(text)) return 'INT'
+  if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) return 'EXT'
+  if (/lamin|foliowana|antypo/g.test(text)) return 'EXT'
+  if (/melamin|M\?M/g.test(text)) return 'EXT'
+  return '???'
 }
 
 function getFaceType(text: string): string {
-  if (/\bPQ\W?F\b/gi.test(text)) return 'PQF'
-  if (/\bPQ\b/gi.test(text)) return 'PQ'
-  if (/s11\/|kilo/gi.test(text)) return 'Kilo'
+  /* Keep order & A>Z if equal order */
+  /*1*/ if (/\bPQ\W?F\b/gi.test(text)) return 'PQF'
+  /*2*/ if (/\bPQ\b/gi.test(text)) return 'PQ'
+  /*3*/ if (/s11\/|kilo/gi.test(text)) return 'Kilo'
 
-  if (/\bPF\b|poliform/gi.test(text)) return 'Poliform'
-  if (/\bPPL\b/gi.test(text)) return 'PPL'
+  /*4*/ if (/\bF\/W\W?H\b|Heksa/gi.test(text)) return 'Heksa'
+  /*4*/ if (/honey/gi.test(text)) return 'Honey'
+  /*4*/ if (/\bM\/M\b|mel/gi.test(text)) return 'M/M'
+  /*4*/ if (/opal/gi.test(text)) return 'Opal White'
+  /*4*/ if (/\bPF\b|poliform/gi.test(text)) return 'Poliform'
+  /*4*/ if (/\bPPL\b/gi.test(text)) return 'PPL'
 
-  if (/\bF\/W\W?H\b|Heksa/gi.test(text)) return 'Heksa'
-  if (/\bF\/W\b|anty/gi.test(text)) return 'FW'
-
-  if (/opal/gi.test(text)) return 'Opal White'
-  if (/honey/gi.test(text)) return 'Honey'
-  if (/\bM\/M\b|mel/gi.test(text)) return 'MM'
-  if (/\bF\/F\b|lamin|folio/gi.test(text)) return 'FF'
-
-  if (/OSB/gi.test(text)) return 'OSB'
+  /*5*/ if (/\bF\/F\b|lamin|folio/gi.test(text)) return 'F/F'
+  /*5*/ if (/\bF\/W\b|anty/gi.test(text)) return 'F/W'
+  /*5*/ if (/OSB/gi.test(text)) return 'OSB'
 
   const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V)\b/
   const expression = new RegExp(`${regexpGrade.source}/${regexpGrade.source}`, 'gi')
@@ -153,51 +151,50 @@ function getFaceType(text: string): string {
     const grade = text.match(expression)
     return grade ? grade[0] : '??/??'
   }
-  return 'nieznany'
+  return '???'
 }
 
 function getWoodType(text: string): string {
   const results = new Set()
 
-  if (/\bEUK\b|eukaliptus/gi.test(text)) results.add('Eukaliptus')
-  if (/\bTB\b|bintangor/gi.test(text)) results.add('Bintangor')
-  if (/\bCH\b|topol/gi.test(text)) results.add('Topola')
-  if (/\bRP\b|radiata/gi.test(text)) results.add('Radiata')
   if (/pine/gi.test(text)) results.add('Sosna')
   if (/liścia/gi.test(text)) results.add('Liściasta')
   if (/iglasta/gi.test(text)) results.add('Iglasta')
+  if (/\bCH\b|topol/gi.test(text)) results.add('Topola')
+  if (/\bRP\b|radiata/gi.test(text)) results.add('Radiata')
+  if (/\bTB\b|bintangor/gi.test(text)) results.add('Bintangor')
+  if (/\bEUK\b|eukaliptus/gi.test(text)) results.add('Eukaliptus')
 
   if (results.size === 0) {
-    results.add('nieznany')
+    results.add('???')
   }
-  return Array.from(results).join(' ')
+  return Array.from(results).join(' ')
 }
 
 function getColor(text: string): string {
   const results = new Set()
 
-  if (/c\.less|trans|bezbarwna/gi.test(text)) results.add('C.less')
+  if (/yell|zółt[ya]/gi.test(text)) results.add('Yellow')
   if (/white|biał[ya]/gi.test(text)) results.add('White')
   if (/black|czarn[ya]/gi.test(text)) results.add('Black')
-  if (/blue|niebiesk[ia]/gi.test(text)) results.add('Blue')
   if (/green|zielon[ya]/gi.test(text)) results.add('Green')
+  if (/blue|niebiesk[ia]/gi.test(text)) results.add('Blue')
   if (/\bred\b|czerwon[ya]/gi.test(text)) results.add('Red')
-  if (/yell|zółt[ya]/gi.test(text)) results.add('Yellow')
+  if (/c\.less|trans|bezbarwna/gi.test(text)) results.add('C.less')
   if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('Grey')
   if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('L.grey')
-  if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(d\.)?(br|brąz|brown)/gi.test(text)) results.add('D.brown')
   if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(br|brąz|brown)/gi.test(text)) results.add('L.brown')
+  if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(d\.)?(br|brąz|brown)\b/gi.test(text)) results.add('D.brown')
 
+  /* Apply defaults if no color specified */
   if (results.size === 0) {
     if (/M\/M/gi.test(text)) results.add('White')
     if (/[FW]\/[FW]/gi.test(text)) results.add('D.brown')
   }
-
   if (results.size === 0) {
-    results.add('nieznany')
+    results.add('???')
   }
-
-  return Array.from(results).join(' ')
+  return Array.from(results).join(' ')
 }
 </script>
 

@@ -26,7 +26,8 @@ console.log(stocksStore.products)
         )"
         :key="product.id"
       >
-        {{ pageStore.firstItemOnPage + i + 1 }}: {{ product.id }} : {{ product.name }}
+        {{ pageStore.firstItemOnPage + i + 1 }}: {{ product.id }} : {{ product.name }} :
+        {{ product.attr.color }}
       </li>
     </ul>
     <Pagination />

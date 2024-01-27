@@ -49,3 +49,10 @@ export function calcPrice(
   }
   return value
 }
+
+export function escapeNonWordChars(string: string) {
+  return string
+    .split('')
+    .map((char) => (!char.match(/\w/) ? char.charCodeAt(0) : char))
+    .join('')
+}
