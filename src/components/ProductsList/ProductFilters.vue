@@ -64,7 +64,7 @@ function reset(e) {
 
 <template>
   <div class="product-filters">
-    <h2>Filtry</h2>
+    <h2>Filtry {{ products.length }}</h2>
     <input type="search" v-model="filterStore.text_filter" />
     <h3>{{ filterStore.text_filter }}</h3>
     <form id="tag-list" @submit.prevent="applyFilters" @reset="applyFilters">
