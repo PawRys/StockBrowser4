@@ -11,8 +11,8 @@ export const useStocksStore = defineStore(
       return JSON.parse(localStorage.SB4_products)
         .filter((el: Plywood) => el.stock_status >= 1)
         .filter((el: Plywood) => {
-          const tagFilterKeys = Object.keys(filterStore.tag_filter)
           let count = 0
+          const tagFilterKeys = Object.keys(filterStore.tag_filter)
           for (const key of tagFilterKeys) {
             const tagFilterProxy =
               filterStore.tag_filter[key as keyof typeof filterStore.tag_filter]
