@@ -57,9 +57,6 @@ function applyFilters(e: Event) {
     Array.from(formData.keys()).map((key) => [key, formData.getAll(key)])
   )
 }
-function reset(e) {
-  // console.log('reset', e)
-}
 </script>
 
 <template>

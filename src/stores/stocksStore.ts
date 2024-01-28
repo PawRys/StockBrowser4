@@ -14,10 +14,10 @@ export const useStocksStore = defineStore(
           let count = 0
           const tagFilterKeys = Object.keys(filterStore.tag_filter)
           for (const key of tagFilterKeys) {
-            const tagFilterProxy =
-              filterStore.tag_filter[key as keyof typeof filterStore.tag_filter]
+            const k = key as keyof typeof filterStore.tag_filter
+            const tagFilterProxy = filterStore.tag_filter[k]
             const tagFilterArr = JSON.parse(JSON.stringify(tagFilterProxy))
-            const plywoodAttrArr = el.attr[key as keyof typeof filterStore.tag_filter].split(' ')
+            const plywoodAttrArr = el.attr[k].split(' ')
             const set = [...new Set([...tagFilterArr, ...plywoodAttrArr])]
             if (tagFilterArr.length + plywoodAttrArr.length > set.length) {
               count++
