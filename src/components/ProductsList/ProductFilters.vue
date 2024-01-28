@@ -38,14 +38,14 @@ watch(
     tags.woodType_tags.clear()
 
     products.value.forEach((el: Plywood) => {
-      tags.sizeT_tags.add(el.attr?.sizeT as string)
-      tags.sizeA_tags.add(el.attr?.sizeA as string)
-      tags.sizeB_tags.add(el.attr?.sizeB as string)
-      tags.faceType_tags.add(el.attr?.faceType as string)
-      tags.footSize_tags.add(el.attr?.footSize as string)
-      tags.glueType_tags.add(el.attr?.glueType as string)
-      el.attr?.color?.split(' ').map((el) => tags.color_tags.add(el))
-      el.attr?.woodType?.split(' ').map((el) => tags.woodType_tags.add(el))
+      sizeT_tags.add(el.attr?.sizeT as string)
+      sizeA_tags.add(el.attr?.sizeA as string)
+      sizeB_tags.add(el.attr?.sizeB as string)
+      faceType_tags.add(el.attr?.faceType as string)
+      footSize_tags.add(el.attr?.footSize as string)
+      glueType_tags.add(el.attr?.glueType as string)
+      el.attr?.color?.split(' ').map((el) => color_tags.add(el))
+      el.attr?.woodType?.split(' ').map((el) => woodType_tags.add(el))
     })
   },
   { immediate: true }
@@ -58,12 +58,14 @@ function applyFilters(e: Event) {
   filterStore.tag_filter = Object.fromEntries(
     Array.from(formData.keys()).map((key) => [key, formData.getAll(key)])
   )
+  console.log(filterStore.tag_filter)
 }
 </script>
 
 <template>
   <div class="product-filters">
     <h2>Filtry</h2>
+    <div>{{ products.length }}</div>
     <input type="search" v-model="filterStore.text_filter" />
     <h3>{{ filterStore.text_filter }}</h3>
     <form id="tag-list" @submit.prevent="applyFilters" @reset="applyFilters">
