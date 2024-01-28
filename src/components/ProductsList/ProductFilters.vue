@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, reactive } from 'vue'
+import { watch } from 'vue'
 import { useFilterStore } from '@/stores/filterStore'
 import { useStocksStore } from '@/stores/stocksStore'
 import { storeToRefs } from 'pinia'
@@ -14,28 +14,26 @@ const collator = new Intl.Collator(undefined, {
   numeric: true
 })
 
-const tags = reactive({
-  sizeT_tags: new Set(),
-  sizeA_tags: new Set(),
-  sizeB_tags: new Set(),
-  color_tags: new Set(),
-  faceType_tags: new Set(),
-  footSize_tags: new Set(),
-  glueType_tags: new Set(),
-  woodType_tags: new Set()
-})
+const sizeT_tags: Set<string> = new Set()
+const sizeA_tags: Set<string> = new Set()
+const sizeB_tags: Set<string> = new Set()
+const color_tags: Set<string> = new Set()
+const faceType_tags: Set<string> = new Set()
+const footSize_tags: Set<string> = new Set()
+const glueType_tags: Set<string> = new Set()
+const woodType_tags: Set<string> = new Set()
 
 watch(
   products,
   () => {
-    tags.sizeT_tags.clear()
-    tags.sizeA_tags.clear()
-    tags.sizeB_tags.clear()
-    tags.color_tags.clear()
-    tags.faceType_tags.clear()
-    tags.footSize_tags.clear()
-    tags.glueType_tags.clear()
-    tags.woodType_tags.clear()
+    sizeT_tags.clear()
+    sizeA_tags.clear()
+    sizeB_tags.clear()
+    color_tags.clear()
+    faceType_tags.clear()
+    footSize_tags.clear()
+    glueType_tags.clear()
+    woodType_tags.clear()
 
     products.value.forEach((el: Plywood) => {
       sizeT_tags.add(el.attr?.sizeT as string)
@@ -58,14 +56,15 @@ function applyFilters(e: Event) {
   filterStore.tag_filter = Object.fromEntries(
     Array.from(formData.keys()).map((key) => [key, formData.getAll(key)])
   )
-  console.log(filterStore.tag_filter)
+}
+function reset(e) {
+  // console.log('reset', e)
 }
 </script>
 
 <template>
   <div class="product-filters">
     <h2>Filtry</h2>
-    <div>{{ products.length }}</div>
     <input type="search" v-model="filterStore.text_filter" />
     <h3>{{ filterStore.text_filter }}</h3>
     <form id="tag-list" @submit.prevent="applyFilters" @reset="applyFilters">
@@ -75,7 +74,7 @@ function applyFilters(e: Event) {
         <fieldset>
           <h4>Lico</h4>
           <template
-            v-for="item of tags.faceType_tags.sort(collator.compare)"
+            v-for="item of Array.from(faceType_tags).sort(collator.compare)"
             :key="`faceType-${escapeNonWordChars(item)}`"
           >
             <label :for="`faceType-${escapeNonWordChars(item)}`">
@@ -89,8 +88,6 @@ function applyFilters(e: Event) {
             </label>
           </template>
         </fieldset>
-
-        <!--
         <fieldset>
           <h4>Kolor</h4>
           <template
@@ -210,7 +207,7 @@ function applyFilters(e: Event) {
             </label>
           </template>
         </fieldset>
-      --></div>
+      </div>
     </form>
   </div>
 </template>
