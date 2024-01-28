@@ -39,23 +39,12 @@ watch(
       sizeT_tags.add(el.attr?.sizeT as string)
       sizeA_tags.add(el.attr?.sizeA as string)
       sizeB_tags.add(el.attr?.sizeB as string)
-      el.attr?.color?.split(' ').map((el) => color_tags.add(el))
       faceType_tags.add(el.attr?.faceType as string)
       footSize_tags.add(el.attr?.footSize as string)
       glueType_tags.add(el.attr?.glueType as string)
+      el.attr?.color?.split(' ').map((el) => color_tags.add(el))
       el.attr?.woodType?.split(' ').map((el) => woodType_tags.add(el))
     })
-
-    // console.log([
-    //   Array.from(sizeT_tags).sort(collator.compare),
-    //   Array.from(sizeA_tags).sort(collator.compare),
-    //   Array.from(sizeB_tags).sort(collator.compare),
-    //   Array.from(color_tags).sort(collator.compare),
-    //   Array.from(faceType_tags).sort(collator.compare),
-    //   Array.from(footSize_tags).sort(collator.compare),
-    //   Array.from(glueType_tags).sort(collator.compare),
-    //   Array.from(woodType_tags).sort(collator.compare)
-    // ])
   },
   { immediate: true }
 )
@@ -67,17 +56,21 @@ function applyFilters(e: Event) {
   filterStore.tag_filter = Object.fromEntries(
     Array.from(formData.keys()).map((key) => [key, formData.getAll(key)])
   )
-  console.log(filterStore.tag_filter)
+}
+function reset(e) {
+  console.log('reset', e)
 }
 </script>
 
 <template>
   <div class="product-filters">
     <h2>Filtry</h2>
+    <div>{{ products.length }}</div>
     <input type="search" v-model="filterStore.text_filter" />
     <h3>{{ filterStore.text_filter }}</h3>
-    <form id="tag-list" @submit.prevent="applyFilters">
+    <form id="tag-list" @submit.prevent="applyFilters" @reset="applyFilters">
       <input type="submit" value="Filtruj" />
+      <input type="reset" value="Reset" />
       <div class="display-columns">
         <fieldset>
           <h4>Lico</h4>
