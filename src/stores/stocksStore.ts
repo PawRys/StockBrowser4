@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 
@@ -9,17 +9,35 @@ export const useStocksStore = defineStore(
     const products = computed(() => {
       if (!localStorage.SB4_products) return []
       return JSON.parse(localStorage.SB4_products)
-        .filter((el: Plywood) => `${el.id} ${el.name}`.match(new RegExp(filterStore.filter, 'gi')))
-        .filter((el: Plywood) => el.stock_status >= 0)
+        .filter((el: Plywood) => el.stock_status >= 1)
+        .filter((el: Plywood) => {
+          const tagFilterKeys = Object.keys(filterStore.tag_filter)
+          let count = 0
+          for (const key of tagFilterKeys) {
+            const tagFilterProxy =
+              filterStore.tag_filter[key as keyof typeof filterStore.tag_filter]
+            const tagFilterArr = JSON.parse(JSON.stringify(tagFilterProxy))
+            const plywoodAttrArr = el.attr[key as keyof typeof filterStore.tag_filter].split(' ')
+            const set = [...new Set([...tagFilterArr, ...plywoodAttrArr])]
+            if (tagFilterArr.length + plywoodAttrArr.length > set.length) {
+              count++
+            }
+          }
+
+          return count == tagFilterKeys.length ? true : false
+        })
+        .filter((el: Plywood) =>
+          `${el.id} ${el.name}`.match(new RegExp(filterStore.text_filter, 'gi'))
+        )
     })
 
-    watch(
-      filterStore.tags,
-      () => {
-        console.log(filterStore.tags)
-      },
-      { immediate: true }
-    )
+    // watch(
+    //   filterStore.tag_filter,
+    //   () => {
+    //     console.log(filterStore.tag_filter)
+    //   },
+    //   { immediate: true }
+    // )
 
     // const jso = JSON.parse(localStorage.SB4_products || '[]')
     // const test2 = reactive(jso)

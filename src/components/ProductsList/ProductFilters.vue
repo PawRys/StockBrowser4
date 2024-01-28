@@ -64,24 +64,18 @@ function applyFilters(e: Event) {
   const formElement = e.target as HTMLFormElement
   const formData = new FormData(formElement)
 
-  filterStore.tags = Object.fromEntries(
-    Array.from(formData.keys()).map((key) => [
-      key,
-      formData.getAll(key).length > 1 ? formData.getAll(key) : formData.get(key)
-    ])
+  filterStore.tag_filter = Object.fromEntries(
+    Array.from(formData.keys()).map((key) => [key, formData.getAll(key)])
   )
-  console.log(filterStore.tags)
+  console.log(filterStore.tag_filter)
 }
 </script>
 
 <template>
-  <input type="checkbox" name="fruits" value="apple" />
-  <input type="checkbox" name="fruits" value="plum" />
-
   <div class="product-filters">
     <h2>Filtry</h2>
-    <input type="search" v-model="filterStore.filter" />
-    <h3>{{ filterStore.filter }}</h3>
+    <input type="search" v-model="filterStore.text_filter" />
+    <h3>{{ filterStore.text_filter }}</h3>
     <form id="tag-list" @submit.prevent="applyFilters">
       <input type="submit" value="Filtruj" />
       <div class="display-columns">
