@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { watch, ref } from 'vue'
 import { useFilterStore } from '@/stores/filterStore'
 import { useStocksStore } from '@/stores/stocksStore'
 import { storeToRefs } from 'pinia'
 import { escapeNonWordChars } from '../Utils/functions'
 
+const refreshComponent = ref(0)
 const filterStore = useFilterStore()
 const stocksStore = useStocksStore()
 const { products } = storeToRefs(stocksStore)
@@ -14,36 +15,49 @@ const collator = new Intl.Collator(undefined, {
   numeric: true
 })
 
-const sizeT_tags: Set<string> = new Set()
-const sizeA_tags: Set<string> = new Set()
-const sizeB_tags: Set<string> = new Set()
-const color_tags: Set<string> = new Set()
-const faceType_tags: Set<string> = new Set()
-const footSize_tags: Set<string> = new Set()
-const glueType_tags: Set<string> = new Set()
-const woodType_tags: Set<string> = new Set()
+const tags = {
+  sizeT: new Set() as Set<string>,
+  sizeA: new Set() as Set<string>,
+  sizeB: new Set() as Set<string>,
+  color: new Set() as Set<string>,
+  faceType: new Set() as Set<string>,
+  footSize: new Set() as Set<string>,
+  glueType: new Set() as Set<string>,
+  woodType: new Set() as Set<string>
+}
+
+const tagsLabels = {
+  faceType: 'Lico',
+  color: 'Kolor',
+  sizeT: 'Grubość',
+  footSize: 'Rozmiar',
+  sizeA: 'Wym A',
+  sizeB: 'Wym B',
+  woodType: 'Gatunek',
+  glueType: 'Klej'
+}
 
 watch(
   products,
   () => {
-    sizeT_tags.clear()
-    sizeA_tags.clear()
-    sizeB_tags.clear()
-    color_tags.clear()
-    faceType_tags.clear()
-    footSize_tags.clear()
-    glueType_tags.clear()
-    woodType_tags.clear()
+    tags.sizeT.clear()
+    tags.sizeA.clear()
+    tags.sizeB.clear()
+    tags.color.clear()
+    tags.faceType.clear()
+    tags.footSize.clear()
+    tags.glueType.clear()
+    tags.woodType.clear()
 
     products.value.forEach((el: Plywood) => {
-      sizeT_tags.add(el.attr?.sizeT as string)
-      sizeA_tags.add(el.attr?.sizeA as string)
-      sizeB_tags.add(el.attr?.sizeB as string)
-      faceType_tags.add(el.attr?.faceType as string)
-      footSize_tags.add(el.attr?.footSize as string)
-      glueType_tags.add(el.attr?.glueType as string)
-      el.attr?.color?.split(' ').map((el) => color_tags.add(el))
-      el.attr?.woodType?.split(' ').map((el) => woodType_tags.add(el))
+      tags.sizeT.add(el.attr?.sizeT as string)
+      tags.sizeA.add(el.attr?.sizeA as string)
+      tags.sizeB.add(el.attr?.sizeB as string)
+      tags.faceType.add(el.attr?.faceType as string)
+      tags.footSize.add(el.attr?.footSize as string)
+      tags.glueType.add(el.attr?.glueType as string)
+      el.attr?.color?.split(' ').map((el) => tags.color.add(el))
+      el.attr?.woodType?.split(' ').map((el) => tags.woodType.add(el))
     })
   },
   { immediate: true }
@@ -57,152 +71,55 @@ function applyFilters(e: Event) {
     Array.from(formData.keys()).map((key) => [key, formData.getAll(key)])
   )
 }
+
+function resetFilters(filterName: string) {
+  if (filterName !== 'global') {
+    delete filterStore.tag_filter[filterName as keyof typeof filterStore.tag_filter]
+    refreshComponent.value++
+  }
+  if (filterName === 'global') {
+    filterStore.tag_filter = {}
+  }
+}
+
+function isChecked(filterName: string, filterValue: string) {
+  const fn = filterName as keyof typeof filterStore.tag_filter
+  const check = filterStore.tag_filter[fn]?.indexOf(filterValue) ?? -1
+  return check >= 0 ? true : false
+}
 </script>
 
 <template>
-  <div class="product-filters">
+  <div class="product-filters" :key="refreshComponent">
     <h2>Filtry {{ products.length }}</h2>
     <input type="search" v-model="filterStore.text_filter" />
     <h3>{{ filterStore.text_filter }}</h3>
-    <form id="tag-list" @submit.prevent="applyFilters" @reset="applyFilters">
+    <form id="tag-list" @submit.prevent="applyFilters">
       <input type="submit" value="Filtruj" />
-      <input type="reset" value="Reset" />
+      <input type="reset" value="Usuń wszystkie filtry" @click="resetFilters('global')" />
+
       <div class="display-columns">
-        <fieldset>
-          <h4>Lico</h4>
+        <fieldset v-for="(setLabel, setName) in tagsLabels" :key="`setKey-${setName}`">
+          <h4>{{ setLabel }}</h4>
+
           <template
-            v-for="item of Array.from(faceType_tags).sort(collator.compare)"
-            :key="`faceType-${escapeNonWordChars(item)}`"
+            v-for="item of Array.from(tags[setName]).sort(collator.compare)"
+            :key="`${setName}-${escapeNonWordChars(item)}`"
           >
-            <label :for="`faceType-${escapeNonWordChars(item)}`">
+            <label :for="`${setName}-${escapeNonWordChars(item)}`">
               <input
-                :value="item"
                 type="checkbox"
-                name="faceType"
-                :id="`faceType-${escapeNonWordChars(item)}`"
+                :value="item"
+                :name="setName"
+                :checked="isChecked(setName, item)"
+                :id="`${setName}-${escapeNonWordChars(item)}`"
               />
               {{ item }}
             </label>
           </template>
-        </fieldset>
-        <fieldset>
-          <h4>Kolor</h4>
-          <template
-            v-for="item of Array.from(color_tags).sort(collator.compare)"
-            :key="`color-${escapeNonWordChars(item)}`"
-          >
-            <label :for="`color-${escapeNonWordChars(item)}`">
-              <input
-                :value="item"
-                type="checkbox"
-                name="color"
-                :id="`color-${escapeNonWordChars(item)}`"
-              />
-              {{ item }}
-            </label>
-          </template>
-        </fieldset>
-        <fieldset>
-          <h4>Grubość</h4>
-          <template
-            v-for="item of Array.from(sizeT_tags).sort(collator.compare)"
-            :key="`sizeT-${escapeNonWordChars(item)}`"
-          >
-            <label :for="`sizeT-${escapeNonWordChars(item)}`">
-              <input
-                :value="item"
-                type="checkbox"
-                name="sizeT"
-                :id="`sizeT-${escapeNonWordChars(item)}`"
-              />
-              {{ item }}
-            </label>
-          </template>
-        </fieldset>
-        <fieldset>
-          <h4>Rozmiar</h4>
-          <template
-            v-for="item of Array.from(footSize_tags).sort(collator.compare)"
-            :key="`footSize-${escapeNonWordChars(item)}`"
-          >
-            <label :for="`footSize-${escapeNonWordChars(item)}`">
-              <input
-                :value="item"
-                type="checkbox"
-                name="footSize"
-                :id="`footSize-${escapeNonWordChars(item)}`"
-              />
-              {{ item }}
-            </label>
-          </template>
-        </fieldset>
-        <fieldset>
-          <h4>Wym A</h4>
-          <template
-            v-for="item of Array.from(sizeA_tags).sort(collator.compare)"
-            :key="`sizeA-${escapeNonWordChars(item)}`"
-          >
-            <label :for="`sizeA-${escapeNonWordChars(item)}`">
-              <input
-                :value="item"
-                type="checkbox"
-                name="sizeA"
-                :id="`sizeA-${escapeNonWordChars(item)}`"
-              />
-              {{ item }}
-            </label>
-          </template>
-        </fieldset>
-        <fieldset>
-          <h4>Wym B</h4>
-          <template
-            v-for="item of Array.from(sizeB_tags).sort(collator.compare)"
-            :key="`sizeB-${escapeNonWordChars(item)}`"
-          >
-            <label :for="`sizeB-${escapeNonWordChars(item)}`">
-              <input
-                :value="item"
-                type="checkbox"
-                name="sizeB"
-                :id="`sizeB-${escapeNonWordChars(item)}`"
-              />
-              {{ item }}
-            </label>
-          </template>
-        </fieldset>
-        <fieldset>
-          <h4>Gatunek</h4>
-          <template
-            v-for="item of Array.from(woodType_tags).sort(collator.compare)"
-            :key="`woodType-${escapeNonWordChars(item)}`"
-          >
-            <label :for="`woodType-${escapeNonWordChars(item)}`">
-              <input
-                :value="item"
-                type="checkbox"
-                name="woodType"
-                :id="`woodType-${escapeNonWordChars(item)}`"
-              />
-              {{ item }}
-            </label>
-          </template>
-        </fieldset>
-        <fieldset>
-          <h4>Klej</h4>
-          <template
-            v-for="item of Array.from(glueType_tags).sort(collator.compare)"
-            :key="`glueType-${escapeNonWordChars(item)}`"
-          >
-            <label :for="`glueType-${escapeNonWordChars(item)}`">
-              <input
-                :value="item"
-                type="checkbox"
-                name="glueType"
-                :id="`glueType-${escapeNonWordChars(item)}`"
-              />
-              {{ item }}
-            </label>
-          </template>
+
+          <input type="submit" value="Filtruj" />
+          <input type="reset" value="Usuń filtr" @click="resetFilters(setName)" />
         </fieldset>
       </div>
     </form>
