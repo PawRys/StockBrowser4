@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { usePageStore } from '@/stores/paginationStore'
+import { scrollTo } from '../Utils/functions'
 
 const pageStore = usePageStore()
 const pageSizeOptions = [10, 20, 50, 100]
@@ -7,7 +8,9 @@ const pageSizeOptions = [10, 20, 50, 100]
 
 <template>
   <div class="product-pagination">
-    <button class="prev-page" @click="pageStore.prevPage">prev</button>
+    <button class="prev-page" @click="[pageStore.prevPage(), scrollTo('#products', -50)]">
+      prev
+    </button>
 
     <button>
       <select name="set-current-page" id="set-current-page" @change="pageStore.setCurrentPage">
@@ -23,7 +26,9 @@ const pageSizeOptions = [10, 20, 50, 100]
       / {{ pageStore.pageCount }}
     </button>
 
-    <button class="next-page" @click="pageStore.nextPage">next</button>
+    <button class="next-page" @click="[pageStore.nextPage(), scrollTo('#products', -50)]">
+      next
+    </button>
 
     <select name="set-page-size" id="set-page-size" @change="pageStore.setPageSize">
       <option

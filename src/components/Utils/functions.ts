@@ -50,9 +50,23 @@ export function calcPrice(
   return value
 }
 
-export function escapeNonWordChars(string: string) {
+export function escapeNonword(string: string) {
   return string
     .split('')
-    .map((char) => (!char.match(/\w/) ? char.charCodeAt(0) : char))
+    .map((char) => (!char.match(/\w|\d/) ? char.charCodeAt(0).toString(32) : char))
     .join('')
+}
+
+export function scrollTo(element: string, offset: number) {
+  offset = offset || 0
+  const el = document.querySelector(element)
+  const rect = el?.getBoundingClientRect()
+  const { scrollY } = window
+  if (rect) {
+    window.scrollTo({
+      // top: el.offsetTop,
+      top: scrollY + rect.top + offset,
+      behavior: 'smooth'
+    })
+  }
 }

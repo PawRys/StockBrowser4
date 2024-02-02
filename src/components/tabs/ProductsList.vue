@@ -18,7 +18,7 @@ const stocksStore = useStocksStore()
     <Filters />
     <hr />
     <Pagination />
-    <table>
+    <table id="products">
       <tr
         v-for="(product, i) in stocksStore.products.slice(
           pageStore.firstItemOnPage,

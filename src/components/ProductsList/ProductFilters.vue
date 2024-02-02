@@ -3,7 +3,7 @@ import { watch, ref } from 'vue'
 import { useFilterStore } from '@/stores/filterStore'
 import { useStocksStore } from '@/stores/stocksStore'
 import { storeToRefs } from 'pinia'
-import { escapeNonWordChars } from '../Utils/functions'
+import { escapeNonword } from '../Utils/functions'
 
 const refreshComponent = ref(0)
 const filterStore = useFilterStore()
@@ -104,15 +104,15 @@ function isChecked(filterName: string, filterValue: string) {
 
           <template
             v-for="item of Array.from(tags[setName]).sort(collator.compare)"
-            :key="`${setName}-${escapeNonWordChars(item)}`"
+            :key="`${setName}-${escapeNonword(item)}`"
           >
-            <label :for="`${setName}-${escapeNonWordChars(item)}`">
+            <label :for="`${setName}-${escapeNonword(item)}`">
               <input
                 type="checkbox"
                 :value="item"
                 :name="setName"
                 :checked="isChecked(setName, item)"
-                :id="`${setName}-${escapeNonWordChars(item)}`"
+                :id="`${setName}-${escapeNonword(item)}`"
               />
               {{ item }}
             </label>
