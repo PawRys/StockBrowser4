@@ -37,6 +37,8 @@ const tagsLabels = {
   glueType: 'Klej'
 }
 
+const statusLabels = ['Zerowy', 'Całkowity', 'Handlowy']
+
 watch(
   products,
   () => {
@@ -94,36 +96,18 @@ function isChecked(filterName: string, filterValue: string) {
     <h2>Filtry {{ products.length }}</h2>
     <input type="search" v-model="filterStore.text_filter" />
     <div>
-      <label for="status-0">
-        <span>Zerowy</span>
-        <input
-          id="status-0"
-          type="radio"
-          name="radio_filter"
-          value="0"
-          v-model="filterStore.status_filter"
-        />
-      </label>
-      <label for="status-1">
-        <span>Całkowity</span>
-        <input
-          id="status-1"
-          type="radio"
-          name="radio_filter"
-          value="1"
-          v-model="filterStore.status_filter"
-        />
-      </label>
-      <label for="status-2">
-        <span>Handlowy</span>
-        <input
-          id="status-2"
-          type="radio"
-          name="radio_filter"
-          value="2"
-          v-model="filterStore.status_filter"
-        />
-      </label>
+      <template v-for="i in 3" :key="`statusKey-${i - 1}`">
+        <label :for="`status-${i - 1}`">
+          <span>{{ statusLabels[i - 1] }}</span>
+          <input
+            type="radio"
+            name="radio_filter"
+            :id="`status-${i - 1}`"
+            :value="i - 1"
+            v-model="filterStore.status_filter"
+          />
+        </label>
+      </template>
     </div>
 
     <h3>{{ filterStore.text_filter }}</h3>
