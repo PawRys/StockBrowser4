@@ -125,10 +125,10 @@ function getVolumeUnit(input: string) {
 }
 
 function getGlueType(text: string): string {
-  if (/sucho|\bMR\b|\bINT\b/g.test(text)) return 'INT'
-  if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) return 'EXT'
-  if (/lamin|foliowana|antypo/g.test(text)) return 'EXT'
-  if (/melamin|M\?M/g.test(text)) return 'EXT'
+  if (/sucho|\bMR\b|\bINT\b/g.test(text)) return 'MR'
+  if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) return 'WD'
+  if (/lamin|foliowana|antypo/g.test(text)) return 'WD'
+  if (/melamin|M\?M/g.test(text)) return 'WD'
   return '???'
 }
 
@@ -153,7 +153,7 @@ function getFaceType(text: string): string {
   /*5*/ if (/s16|s17/gi.test(text)) return 'W/W'
   /*5*/ if (/OSB/gi.test(text)) return 'OSB'
 
-  const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V)\b/
+  const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V|M|F|W)\b/
   const expression = new RegExp(`${regexpGrade.source}/${regexpGrade.source}`, 'gi')
   if (expression.test(text)) {
     const grade = text.match(expression)
@@ -165,9 +165,9 @@ function getFaceType(text: string): string {
 function getWoodType(text: string): string {
   const results = new Set()
 
-  if (/pine/gi.test(text)) results.add('Sosna')
   if (/liścia/gi.test(text)) results.add('Liściasta')
   if (/iglasta/gi.test(text)) results.add('Iglasta')
+  if (/pine|sosn/gi.test(text)) results.add('Sosna')
   if (/\bCH\b|topol/gi.test(text)) results.add('Topola')
   if (/\bRP\b|radiata/gi.test(text)) results.add('Radiata')
   if (/\bTB\b|bintangor/gi.test(text)) results.add('Bintangor')
