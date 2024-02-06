@@ -93,11 +93,43 @@ function isChecked(filterName: string, filterValue: string) {
   <div class="product-filters" :key="refreshComponent">
     <h2>Filtry {{ products.length }}</h2>
     <input type="search" v-model="filterStore.text_filter" />
+    <div>
+      <label for="status-0">
+        <span>Zerowy</span>
+        <input
+          id="status-0"
+          type="radio"
+          name="radio_filter"
+          value="0"
+          v-model="filterStore.status_filter"
+        />
+      </label>
+      <label for="status-1">
+        <span>Całkowity</span>
+        <input
+          id="status-1"
+          type="radio"
+          name="radio_filter"
+          value="1"
+          v-model="filterStore.status_filter"
+        />
+      </label>
+      <label for="status-2">
+        <span>Handlowy</span>
+        <input
+          id="status-2"
+          type="radio"
+          name="radio_filter"
+          value="2"
+          v-model="filterStore.status_filter"
+        />
+      </label>
+    </div>
+
     <h3>{{ filterStore.text_filter }}</h3>
     <form id="tag-list" @submit.prevent="applyFilters">
       <input type="submit" value="Filtruj" />
       <input type="reset" value="Usuń wszystkie filtry" @click="resetFilters('global')" />
-
       <div class="display-columns">
         <fieldset v-for="(setLabel, setName) in tagsLabels" :key="`setKey-${setName}`">
           <h4>{{ setLabel }}</h4>

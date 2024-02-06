@@ -15,10 +15,11 @@ interface TagFilter {
 export const useFilterStore = defineStore(
   'SB4_filterStore',
   () => {
+    const status_filter = ref(1)
     const text_filter = ref('')
     const tag_filter = reactive({} as TagFilter)
 
-    return { text_filter, tag_filter }
+    return { status_filter, text_filter, tag_filter }
   },
   { persist: false }
 )
