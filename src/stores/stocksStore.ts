@@ -3,6 +3,11 @@ import { defineStore } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 import { useSortingStore } from '@/stores/sortingStore'
 
+const collator = new Intl.Collator(undefined, {
+  usage: 'sort',
+  numeric: true
+})
+
 export const useStocksStore = defineStore(
   'SB4_stocksStore',
   () => {
@@ -31,6 +36,8 @@ export const useStocksStore = defineStore(
         .filter((el: Plywood) =>
           `${el.id} ${el.name}`.match(new RegExp(filterStore.text_filter, 'gi'))
         )
+      // .sort((a, b) => collator.compare(a.id, b.id))
+      // .sort((a, b) => collator.compare(a.name, b.name))
     })
 
     // watch(
