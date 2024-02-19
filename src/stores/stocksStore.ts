@@ -1,11 +1,13 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
+import { useSortingStore } from '@/stores/sortingStore'
 
 export const useStocksStore = defineStore(
   'SB4_stocksStore',
   () => {
     const filterStore = useFilterStore()
+    const sortingStore = useSortingStore()
     const products = computed(() => {
       if (!localStorage.SB4_products) return []
       return JSON.parse(localStorage.SB4_products)
