@@ -37,9 +37,10 @@ const stocksStore = useStocksStore()
         <td>{{ product.attr.sizeB }}</td>
         <td>{{ product.attr.woodType }}</td>
         <td>{{ product.attr.glueType }}</td>
-        <td>{{ product.stockStatus }}</td>
+        <!-- <td>{{ product.stockStatus }}</td> -->
         <td>{{ product.id }}</td>
         <td>{{ product.name }}</td>
+        <td>{{ product.price }}</td>
       </tr>
     </table>
     <Pagination />

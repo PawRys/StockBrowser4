@@ -37,30 +37,24 @@ export const useStocksStore = defineStore(
         .filter((el: Plywood) =>
           `${el.id} ${el.name}`.match(new RegExp(filterStore.text_filter, 'gi'))
         )
-        .sort((a, b) => {
-          let first = a.id
-          let last = b.id
-          if (sortingStore.sortColumn === 'id') {
-            first = a.id
-            last = b.id
-          }
-          if (sortingStore.sortColumn === 'name') {
-            first = a.name
-            last = b.name
-          }
-          if (sortingStore.sortColumn === 'size') {
-            first = a.size
-            last = b.size
-          }
-          if (sortingStore.sortColumn === 'price_m3') {
-            first = calcPrice(a.size, a.price, 'm3', 'm3')
-            last = calcPrice(b.size, b.price, 'm3', 'm3')
-          }
+        .sort((a: any, b: any) => {
+          const sortColumn = sortingStore.sortColumn
+          const sortUnit = sortingStore.sortUnit
 
+          let first = a[sortColumn]
+          let last = b[sortColumn]
+
+          if (sortColumn.match(/price/i)) {
+            first = calcPrice(a.size, a[sortColumn], sortUnit, 'm3')
+            last = calcPrice(b.size, b[sortColumn], sortUnit, 'm3')
+          }
+          if (sortColumn.match(/Stock/i)) {
+            first = calcQuant(a.size, a[sortColumn], sortUnit, 'm3')
+            last = calcQuant(b.size, b[sortColumn], sortUnit, 'm3')
+          }
           if (sortingStore.sortOrder !== 'desc') return collator.compare(first, last)
           if (sortingStore.sortOrder === 'desc') return collator.compare(last, first)
         })
-      // .sort((a, b) => collator.compare(a.name, b.name))
     })
 
     // watch(

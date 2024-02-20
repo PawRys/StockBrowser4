@@ -81,15 +81,15 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     plywood.attr.glueType = glueType_val
     plywood.attr.woodType = woodType_val
     plywood.attr.color = color_val
-    plywood.price = 0
-    plywood.totalStock = 0
-    plywood.aviableStock = 0
-    plywood.stockStatus = 0
+    // plywood.price = 0
+    // plywood.totalStock = 0
+    // plywood.aviableStock = 0
+    // plywood.stockStatus = 0
 
     if (datatype === 'prices') {
       const total_price = Number(row[5].replace(',', '.'))
-      const totalStock = Number(row[3].replace(',', '.'))
-      const calculation = total_price / totalStock
+      const total_stock = Number(row[3].replace(',', '.'))
+      const calculation = total_price / total_stock
       const unit_price = isFinite(calculation) ? calculation : 0
       plywood.price = calcPrice(plywoodSize, unit_price, plywoodVolumeUnit, 'm3')
     }
