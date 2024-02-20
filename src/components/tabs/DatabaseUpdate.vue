@@ -82,26 +82,26 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     plywood.attr.woodType = woodType_val
     plywood.attr.color = color_val
     plywood.price = 0
-    plywood.total_stock = 0
-    plywood.aviable_stock = 0
-    plywood.stock_status = 0
+    plywood.totalStock = 0
+    plywood.aviableStock = 0
+    plywood.stockStatus = 0
 
     if (datatype === 'prices') {
       const total_price = Number(row[5].replace(',', '.'))
-      const total_stock = Number(row[3].replace(',', '.'))
-      const calculation = total_price / total_stock
+      const totalStock = Number(row[3].replace(',', '.'))
+      const calculation = total_price / totalStock
       const unit_price = isFinite(calculation) ? calculation : 0
       plywood.price = calcPrice(plywoodSize, unit_price, plywoodVolumeUnit, 'm3')
     }
 
     if (datatype === 'stocks') {
-      const total_stock = Number(row[6].replace(',', '.'))
-      const total_status = total_stock > 0 ? 1 : undefined
-      const aviable_stock = Number(row[3].replace(',', '.'))
-      const aviable_status = aviable_stock > 0 ? 2 : undefined
-      plywood.total_stock = calcQuant(plywoodSize, total_stock, plywoodVolumeUnit, 'm3')
-      plywood.aviable_stock = calcQuant(plywoodSize, aviable_stock, plywoodVolumeUnit, 'm3')
-      plywood.stock_status = aviable_status || total_status || 0
+      const totalStock = Number(row[6].replace(',', '.'))
+      const total_status = totalStock > 0 ? 1 : undefined
+      const aviableStock = Number(row[3].replace(',', '.'))
+      const aviable_status = aviableStock > 0 ? 2 : undefined
+      plywood.totalStock = calcQuant(plywoodSize, totalStock, plywoodVolumeUnit, 'm3')
+      plywood.aviableStock = calcQuant(plywoodSize, aviableStock, plywoodVolumeUnit, 'm3')
+      plywood.stockStatus = aviable_status || total_status || 0
     }
 
     products.push(plywood)

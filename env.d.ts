@@ -15,9 +15,9 @@ type Plywood = {
     woodType: string
   }
   price: number
-  total_stock: number
-  aviable_stock: number
-  stock_status: number
+  totalStock: number
+  aviableStock: number
+  stockStatus: number
   inventory?: string[]
 }
 
@@ -36,8 +36,8 @@ type Plywood = {
 //     woodType?: string
 //   }
 //   price?: number
-//   total_stock?: number
-//   aviable_stock?: number
-//   stock_status?: number
+//   totalStock?: number
+//   aviableStock?: number
+//   stockStatus?: number
 //   inventory?: string[]
 // }

@@ -17,7 +17,7 @@ export const useStocksStore = defineStore(
     const products = computed(() => {
       if (!localStorage.SB4_products) return []
       return JSON.parse(localStorage.SB4_products)
-        .filter((el: Plywood) => el.stock_status >= filterStore.status_filter)
+        .filter((el: Plywood) => el.stockStatus >= filterStore.status_filter)
         .filter((el: Plywood) => {
           let count = 0
           const tagFilterKeys = Object.keys(filterStore.tag_filter)

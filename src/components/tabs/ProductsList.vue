@@ -37,7 +37,7 @@ const stocksStore = useStocksStore()
         <td>{{ product.attr.sizeB }}</td>
         <td>{{ product.attr.woodType }}</td>
         <td>{{ product.attr.glueType }}</td>
-        <td>{{ product.stock_status }}</td>
+        <td>{{ product.stockStatus }}</td>
         <td>{{ product.id }}</td>
         <td>{{ product.name }}</td>
       </tr>
