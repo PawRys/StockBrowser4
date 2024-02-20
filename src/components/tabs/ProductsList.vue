@@ -4,6 +4,7 @@ import { usePageStore } from '@/stores/paginationStore'
 import { useStocksStore } from '@/stores/stocksStore'
 import Pagination from '../ProductsList/ProductPagination.vue'
 import Filters from '../ProductsList/ProductFilters.vue'
+import Sorting from '../ProductsList/ProtuctSorting.vue'
 
 const pageStore = usePageStore()
 const stocksStore = useStocksStore()
@@ -18,6 +19,7 @@ const stocksStore = useStocksStore()
     <Filters />
     <hr />
     <Pagination />
+    <Sorting />
     <table id="products">
       <tr
         v-for="(product, i) in stocksStore.products.slice(

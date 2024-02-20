@@ -81,6 +81,9 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     plywood.attr.glueType = glueType_val
     plywood.attr.woodType = woodType_val
     plywood.attr.color = color_val
+    plywood.price = 0
+    plywood.total_stock = 0
+    plywood.aviable_stock = 0
     plywood.stock_status = 0
 
     if (datatype === 'prices') {

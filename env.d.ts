@@ -14,9 +14,9 @@ type Plywood = {
     glueType: string
     woodType: string
   }
-  price?: number
-  total_stock?: number
-  aviable_stock?: number
+  price: number
+  total_stock: number
+  aviable_stock: number
   stock_status: number
   inventory?: string[]
 }
