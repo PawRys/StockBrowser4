@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 import { useSortingStore } from '@/stores/sortingStore'
+import { calcPrice, calcQuant } from '../components/Utils/functions'
 
 const collator = new Intl.Collator(undefined, {
   usage: 'sort',
@@ -36,7 +37,29 @@ export const useStocksStore = defineStore(
         .filter((el: Plywood) =>
           `${el.id} ${el.name}`.match(new RegExp(filterStore.text_filter, 'gi'))
         )
-      // .sort((a, b) => collator.compare(a.id, b.id))
+        .sort((a, b) => {
+          let first = a.id
+          let last = b.id
+          if (sortingStore.sortColumn === 'id') {
+            first = a.id
+            last = b.id
+          }
+          if (sortingStore.sortColumn === 'name') {
+            first = a.name
+            last = b.name
+          }
+          if (sortingStore.sortColumn === 'size') {
+            first = a.size
+            last = b.size
+          }
+          if (sortingStore.sortColumn === 'price_m3') {
+            first = calcPrice(a.size, a.price, 'm3', 'm3')
+            last = calcPrice(b.size, b.price, 'm3', 'm3')
+          }
+
+          if (sortingStore.sortOrder !== 'desc') return collator.compare(first, last)
+          if (sortingStore.sortOrder === 'desc') return collator.compare(last, first)
+        })
       // .sort((a, b) => collator.compare(a.name, b.name))
     })
 
