@@ -44,16 +44,16 @@ export const useStocksStore = defineStore(
           let first = a[sortColumn]
           let last = b[sortColumn]
 
-          if (sortColumn.match(/price/i)) {
+          if (sortUnit && sortColumn.match(/price/i)) {
             first = calcPrice(a.size, a[sortColumn], sortUnit, 'm3')
             last = calcPrice(b.size, b[sortColumn], sortUnit, 'm3')
           }
-          if (sortColumn.match(/Stock/i)) {
+          if (sortUnit && sortColumn.match(/Stock/i)) {
             first = calcQuant(a.size, a[sortColumn], sortUnit, 'm3')
             last = calcQuant(b.size, b[sortColumn], sortUnit, 'm3')
           }
-          if (sortingStore.sortOrder !== 'desc') return collator.compare(first, last)
-          if (sortingStore.sortOrder === 'desc') return collator.compare(last, first)
+          if (sortingStore.sortDir !== 1) return collator.compare(first, last)
+          if (sortingStore.sortDir === 1) return collator.compare(last, first)
         })
     })
 

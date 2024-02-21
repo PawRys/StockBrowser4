@@ -84,7 +84,7 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     // plywood.price = 0
     // plywood.totalStock = 0
     // plywood.aviableStock = 0
-    // plywood.stockStatus = 0
+    plywood.stockStatus = 0
 
     if (datatype === 'prices') {
       const total_price = Number(row[5].replace(',', '.'))
