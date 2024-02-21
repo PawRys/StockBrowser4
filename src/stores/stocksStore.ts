@@ -44,11 +44,11 @@ export const useStocksStore = defineStore(
           let first = a[sortColumn]
           let last = b[sortColumn]
 
-          if (sortUnit && sortColumn.match(/price/i)) {
+          if (sortColumn.match(/price/i)) {
             first = calcPrice(a.size, a[sortColumn], sortUnit, 'm3')
             last = calcPrice(b.size, b[sortColumn], sortUnit, 'm3')
           }
-          if (sortUnit && sortColumn.match(/Stock/i)) {
+          if (sortColumn.match(/Stock/i)) {
             first = calcQuant(a.size, a[sortColumn], sortUnit, 'm3')
             last = calcQuant(b.size, b[sortColumn], sortUnit, 'm3')
           }
