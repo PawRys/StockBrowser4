@@ -45,16 +45,16 @@ function submit(e: Event): void {
   console.timeEnd('save to store')
 }
 
-function mergeData(newData: Plywood[], databaseCopy: Plywood[]) {
+function mergeData(newData: Plywood[], localStorageData: Plywood[]) {
   for (const plywood of newData) {
-    const indexOfDatabaseCopy = databaseCopy.findIndex((item) => item.id === plywood.id)
-    if (indexOfDatabaseCopy < 0) {
-      databaseCopy.push(plywood)
+    const indexOfLocalStorageData = localStorageData.findIndex((item) => item.id === plywood.id)
+    if (indexOfLocalStorageData < 0) {
+      localStorageData.push(plywood)
     } else {
-      Object.assign(databaseCopy[indexOfDatabaseCopy], plywood)
+      Object.assign(localStorageData[indexOfLocalStorageData], plywood)
     }
   }
-  return databaseCopy
+  return localStorageData
 }
 
 function convertToObject(data: string[][], datatype: string): Plywood[] {
@@ -84,23 +84,26 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     // plywood.price = 0
     // plywood.totalStock = 0
     // plywood.aviableStock = 0
-    plywood.stockStatus = 0
+    // plywood.stockStatus = 0
 
     if (datatype === 'prices') {
       const total_price = Number(row[5].replace(',', '.'))
       const total_stock = Number(row[3].replace(',', '.'))
+      const total_status = total_stock > 0 ? 2 : undefined
       const calculation = total_price / total_stock
       const unit_price = isFinite(calculation) ? calculation : 0
       plywood.price = calcPrice(plywoodSize, unit_price, plywoodVolumeUnit, 'm3')
+      plywood.totalStock = calcQuant(plywoodSize, total_stock, plywoodVolumeUnit, 'm3')
+      plywood.stockStatus = total_status || 0
     }
 
     if (datatype === 'stocks') {
-      const totalStock = Number(row[6].replace(',', '.'))
-      const total_status = totalStock > 0 ? 1 : undefined
-      const aviableStock = Number(row[3].replace(',', '.'))
-      const aviable_status = aviableStock > 0 ? 2 : undefined
-      plywood.totalStock = calcQuant(plywoodSize, totalStock, plywoodVolumeUnit, 'm3')
-      plywood.aviableStock = calcQuant(plywoodSize, aviableStock, plywoodVolumeUnit, 'm3')
+      const total_stock = Number(row[6].replace(',', '.'))
+      const total_status = total_stock > 0 ? 1 : undefined
+      const aviable_stock = Number(row[3].replace(',', '.'))
+      const aviable_status = aviable_stock > 0 ? 2 : undefined
+      plywood.totalStock = calcQuant(plywoodSize, total_stock, plywoodVolumeUnit, 'm3')
+      plywood.aviableStock = calcQuant(plywoodSize, aviable_stock, plywoodVolumeUnit, 'm3')
       plywood.stockStatus = aviable_status || total_status || 0
     }
 

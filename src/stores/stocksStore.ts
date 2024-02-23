@@ -63,12 +63,14 @@ export const useStocksStore = defineStore(
   'SB4_stocksStore',
   () => {
     const products = computed(() => {
-      if (!localStorage.SB4_products) return []
-      return JSON.parse(localStorage.SB4_products)
+      const ls = localStorage.SB4_products ? localStorage.SB4_products : []
+      const result = JSON.parse(ls)
         .filter((el: Plywood) => applyStatusFilter(el))
         .filter((el: Plywood) => applyTagFilter(el))
         .filter((el: Plywood) => applyTextFilter(el))
         .sort(applySorting)
+
+      return result
     })
 
     // watch(
