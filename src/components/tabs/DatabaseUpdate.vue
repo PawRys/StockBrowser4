@@ -46,6 +46,8 @@ function submit(e: Event): void {
 }
 
 function mergeData(newData: Plywood[], localStorageData: Plywood[]) {
+  /** TODO: localStorageData price column and stock column should be reset to 0 */
+  /**  */
   for (const plywood of newData) {
     const indexOfLocalStorageData = localStorageData.findIndex((item) => item.id === plywood.id)
     if (indexOfLocalStorageData < 0) {
