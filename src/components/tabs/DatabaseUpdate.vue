@@ -39,15 +39,27 @@ function submit(e: Event): void {
   console.time('merge_data')
   const data_from_localStorage = JSON.parse(stocksStore.test2 || '[]')
   // const data = stocksStore.test2
-  const mergedData = mergeData(data_in_final_shape, data_from_localStorage)
+  const mergedData = mergeData(data_in_final_shape, data_from_localStorage, datatype.value)
   stocksStore.saveProducts(mergedData)
   console.timeEnd('merge_data')
   console.timeEnd('save to store')
 }
 
-function mergeData(newData: Plywood[], localStorageData: Plywood[]) {
-  /** TODO: localStorageData price column and stock column should be reset to 0 before merging */
-  /**  */
+function mergeData(newData: Plywood[], localStorageData: Plywood[], datatype: string) {
+  localStorageData.map((el) => {
+    if (datatype === 'prices') {
+      el.price = 0
+      el.totalStock = 0
+      el.stockStatus = 0
+    }
+    if (datatype === 'stocks') {
+      el.aviableStock = 0
+      el.totalStock = 0
+      el.stockStatus = 0
+    }
+    return el
+  })
+
   for (const plywood of newData) {
     const indexOfLocalStorageData = localStorageData.findIndex((item) => item.id === plywood.id)
     if (indexOfLocalStorageData < 0) {

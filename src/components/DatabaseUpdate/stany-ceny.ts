@@ -3,7 +3,8 @@ Kod towaru		nazwa towaru		jm		stan	cena	wartość
 03S01/02		Sklejka liściasta suchotrwała 3x1525x1525 B/B		m2		0	0,00	0,00		
 03S02/02		Sklejka liściasta suchotrwała 3x1525x1525 B/BB		m2		3625,3368	15,52	56270,81		
 03S04/02		Sklejka liściasta suchotrwała 3x1525x1525 BB/BB		m2		2203,0015	14,10	31070,73		
-03S05/02		Sklejka liściasta suchotrwała 3x1525x1525 BB/CP		m2		0	0,00	0,02		
+`
+const stany_ceny2 = `03S05/02		Sklejka liściasta suchotrwała 3x1525x1525 BB/CP		m2		0	0,00	0,02		
 03S07/02		Sklejka liściasta suchotrwała 3x1525x1525 CP/CP		m2		0	0,00	0,00		
 03S10/02		Sklejka liściasta suchotrwała 3x1525x1525 C/C		m2		0	0,00	0,00		
 03S18/02		Sklejka liściasta suchotrwała 3x1525x1525 CP/C		m2		0	0,00	0,00		
