@@ -34,12 +34,12 @@ function submit(e: Event): void {
   const form_textbox = form.elements.namedItem('textBox') as HTMLInputElement
   const data_as_array = convertToArray(form_textbox.value)
   const data_as_array_purified = removeGarbage(data_as_array, datatype.value)
-  const data_in_final_shape = convertToObject(data_as_array_purified, datatype.value)
+  const data_as_object = convertToObject(data_as_array_purified, datatype.value)
 
   console.time('merge_data')
   const data_from_localStorage = JSON.parse(stocksStore.test2 || '[]')
   // const data = stocksStore.test2
-  const mergedData = mergeData(data_in_final_shape, data_from_localStorage, datatype.value)
+  const mergedData = mergeData(data_as_object, data_from_localStorage, datatype.value)
   stocksStore.saveProducts(mergedData)
   console.timeEnd('merge_data')
   console.timeEnd('save to store')
