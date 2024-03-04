@@ -49,7 +49,7 @@ export function defineDataType(input: string) {
   return { data: dataType, message: message }
 }
 
-export function convertToArray(data: string) {
+export function convertToArray(data: string): string[][] {
   const result = []
   const lines = data.match(/[^\r\n]+/g) || []
   for (const line of lines) {
