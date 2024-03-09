@@ -6,7 +6,7 @@ export const useSortingStore = defineStore(
   () => {
     const sortDir = ref(0)
     const sortUnit = ref('')
-    const sortColumn = ref('id')
+    const sortColumn = ref<string>('id')
     watch([sortUnit, sortColumn], () => (sortDir.value = 0))
 
     return { sortUnit, sortDir, sortColumn }

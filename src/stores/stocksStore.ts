@@ -68,7 +68,7 @@ export const useStocksStore = defineStore(
         .filter((el: Plywood) => applyStatusFilter(el))
         .filter((el: Plywood) => applyTagFilter(el))
         .filter((el: Plywood) => applyTextFilter(el))
-        .sort(applySorting)
+        .sort((a: Plywood, b: Plywood) => applySorting(a, b))
 
       return result
     })
