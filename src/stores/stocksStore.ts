@@ -38,21 +38,21 @@ function applyTagFilter(el: Plywood) {
   return count == tagFilterKeys.length ? true : false
 }
 
-function applySorting(a: any, b: any) {
+function applySorting(a: Plywood, b: Plywood) {
   const sortingStore = useSortingStore()
-  const sortColumn = sortingStore.sortColumn
+  const sortColumn = sortingStore.sortColumn as keyof Plywood
   const sortUnit = sortingStore.sortUnit
 
-  let first = a[sortColumn]
+  let first: string = a[sortColumn]
   let last = b[sortColumn]
 
   if (sortColumn.match(/price/i)) {
-    first = calcPrice(a.size, a[sortColumn], sortUnit, 'm3')
-    last = calcPrice(b.size, b[sortColumn], sortUnit, 'm3')
+    first = calcPrice(a.size, Number(a[sortColumn]), sortUnit, 'm3').toString()
+    last = calcPrice(b.size, Number(b[sortColumn]), sortUnit, 'm3').toString()
   }
   if (sortColumn.match(/Stock/i)) {
-    first = calcQuant(a.size, a[sortColumn], sortUnit, 'm3')
-    last = calcQuant(b.size, b[sortColumn], sortUnit, 'm3')
+    first = calcQuant(a.size, Number(a[sortColumn]), sortUnit, 'm3').toString()
+    last = calcQuant(b.size, Number(b[sortColumn]), sortUnit, 'm3').toString()
   }
   if (sortingStore.sortDir !== 1) return collator.compare(first, last)
   if (sortingStore.sortDir === 1) return collator.compare(last, first)
