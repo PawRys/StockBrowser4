@@ -6,11 +6,6 @@ import { calcPrice, calcQuant } from '../components/Utils/functions'
 // const filterStore = useFilterStore()
 // const sortingStore = useSortingStore()
 
-const collator = new Intl.Collator(undefined, {
-  usage: 'sort',
-  numeric: true
-})
-
 function applyStatusFilter(el: Plywood) {
   const filterStore = useFilterStore()
   return el.stockStatus >= filterStore.status_filter
@@ -42,17 +37,21 @@ function applySorting(a: Plywood, b: Plywood) {
   const sortingStore = useSortingStore()
   const sortColumn = sortingStore.sortColumn as keyof Plywood
   const sortUnit = sortingStore.sortUnit
+  const collator = new Intl.Collator(undefined, {
+    usage: 'sort',
+    numeric: true
+  })
 
-  let first: string = a[sortColumn]
+  let first = a[sortColumn]
   let last = b[sortColumn]
 
   if (sortColumn.match(/price/i)) {
-    first = calcPrice(a.size, Number(a[sortColumn]), sortUnit, 'm3').toString()
-    last = calcPrice(b.size, Number(b[sortColumn]), sortUnit, 'm3').toString()
+    first = calcPrice(a.size, Number(a[sortColumn]), sortUnit, 'm3')
+    last = calcPrice(b.size, Number(b[sortColumn]), sortUnit, 'm3')
   }
   if (sortColumn.match(/Stock/i)) {
-    first = calcQuant(a.size, Number(a[sortColumn]), sortUnit, 'm3').toString()
-    last = calcQuant(b.size, Number(b[sortColumn]), sortUnit, 'm3').toString()
+    first = calcQuant(a.size, Number(a[sortColumn]), sortUnit, 'm3')
+    last = calcQuant(b.size, Number(b[sortColumn]), sortUnit, 'm3')
   }
   if (sortingStore.sortDir !== 1) return collator.compare(first, last)
   if (sortingStore.sortDir === 1) return collator.compare(last, first)
