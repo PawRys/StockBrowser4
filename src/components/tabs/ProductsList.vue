@@ -1,6 +1,5 @@
 td
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import { usePageStore } from '@/stores/paginationStore'
 import { useStocksStore } from '@/stores/stocksStore'
 import Pagination from '../ProductsList/ProductPagination.vue'
@@ -9,14 +8,12 @@ import Sorting from '../ProductsList/ProtuctSorting.vue'
 
 const pageStore = usePageStore()
 const stocksStore = useStocksStore()
-const refreshComponent = ref(0)
 </script>
 
 <template>
   <section id="products-list">
     <h2>Products</h2>
     <h3>List length: {{ stocksStore.products.length }}</h3>
-    <button @click="refreshComponent++">refresh: {{ refreshComponent }}</button>
     <hr />
     <Filters />
     <hr />

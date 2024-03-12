@@ -62,11 +62,8 @@ function applySorting(a: Plywood, b: Plywood) {
 export const useStocksStore = defineStore(
   'SB4_stocksStore',
   () => {
-    const filterStore = useFilterStore()
-
     const products = computed(() => {
-      const ls = localStorage.SB4_products ? localStorage.SB4_products : '[]'
-      return JSON.parse(ls)
+      return JSON.parse(localStorage.SB4_products ? localStorage.SB4_products : '[]')
         .filter((el: Plywood) => applyStatusFilter(el))
         .filter((el: Plywood) => applyTagFilter(el))
         .filter((el: Plywood) => applyTextFilter(el))
@@ -74,10 +71,7 @@ export const useStocksStore = defineStore(
     })
 
     function saveProducts(data: Plywood[]) {
-      console.log(products.value)
       localStorage.SB4_products = JSON.stringify(data)
-      products.value.filter((el: Plywood) => applyStatusFilter(el))
-      console.log(products.value)
     }
 
     return { products, saveProducts }
