@@ -54,27 +54,30 @@ function applySorting(a: Plywood, b: Plywood) {
     lo = calcQuant(a.size, Number(aValue), sortUnit, 'm3').toString()
     hi = calcQuant(b.size, Number(bValue), sortUnit, 'm3').toString()
   }
-  if (sortingStore.sortDir !== 1) return collator.compare(lo, hi)
-  if (sortingStore.sortDir === 1) return collator.compare(hi, lo)
+  if (sortingStore.sortDir >= 0) return collator.compare(lo, hi)
+  if (sortingStore.sortDir < 0) return collator.compare(hi, lo)
   return 0
 }
 
 export const useStocksStore = defineStore(
   'SB4_stocksStore',
   () => {
+    const filterStore = useFilterStore()
+
     const products = computed(() => {
-      const ls = localStorage.SB4_products ? localStorage.SB4_products : []
-      const result = JSON.parse(ls)
+      const ls = localStorage.SB4_products ? localStorage.SB4_products : '[]'
+      return JSON.parse(ls)
         .filter((el: Plywood) => applyStatusFilter(el))
         .filter((el: Plywood) => applyTagFilter(el))
         .filter((el: Plywood) => applyTextFilter(el))
         .sort((a: Plywood, b: Plywood) => applySorting(a, b))
-
-      return result
     })
 
-    function saveProducts(data: unknown) {
+    function saveProducts(data: Plywood[]) {
+      console.log(products.value)
       localStorage.SB4_products = JSON.stringify(data)
+      products.value.filter((el: Plywood) => applyStatusFilter(el))
+      console.log(products.value)
     }
 
     return { products, saveProducts }

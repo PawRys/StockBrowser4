@@ -29,8 +29,8 @@ const tags = {
 const tagsLabels = {
   faceType: 'Lico',
   color: 'Kolor',
-  sizeT: 'Grubość',
   footSize: 'Rozmiar',
+  sizeT: 'Grubość',
   sizeA: 'Wym A',
   sizeB: 'Wym B',
   woodType: 'Gatunek',

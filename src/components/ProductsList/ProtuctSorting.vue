@@ -20,13 +20,9 @@ const sortingTable = [
 <template>
   <section>
     <h3>Sortowanie</h3>
-    <template v-for="i in sortingTable" :key="escapeNonword(i.label)">
-      <button
-        @click="
-          [(s.sortColumn = i.column), (s.sortUnit = i.unit), (s.sortDir = (s.sortDir + 1) % 2)]
-        "
-      >
-        {{ i.label }}
+    <template v-for="st in sortingTable" :key="escapeNonword(st.label)">
+      <button @click="[(s.sortColumn = st.column), (s.sortUnit = st.unit), (s.sortDir *= -1)]">
+        {{ st.label }}
       </button>
     </template>
   </section>

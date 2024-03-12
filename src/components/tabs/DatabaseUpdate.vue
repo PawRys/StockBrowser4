@@ -158,7 +158,7 @@ function getFaceType(text: string): string {
   /*2*/ if (/\bPQ\b/gi.test(text)) return 'PQ'
   /*3*/ if (/s11\/|kilo/gi.test(text)) return 'Kilo'
 
-  /*4*/ if (/\bF\/W\W?H\b|Heksa/gi.test(text)) return 'Heksa'
+  /*4*/ if (/\bF\/W\W?H\b|Heksa/gi.test(text)) return 'F/WH+'
   /*4*/ if (/\bhoney\b/gi.test(text)) return 'Honey'
   /*4*/ if (/\bM\/M\b|mel/gi.test(text)) return 'M/M'
   /*4*/ if (/\bopal\b/gi.test(text)) return 'Opal White'
