@@ -16,21 +16,21 @@ function applyTextFilter(el: Plywood) {
   return `${el.id} ${el.name}`.match(new RegExp(filterStore.text_filter, 'gi'))
 }
 
-function applyTagFilter(el: Plywood) {
+function applyTagFilter(plywood: Plywood) {
   const filterStore = useFilterStore()
-  let count = 0
-  const tagFilterKeys = Object.keys(filterStore.tag_filter)
-  for (const key of tagFilterKeys) {
-    const k = key as keyof typeof filterStore.tag_filter
-    const tagFilterProxy = filterStore.tag_filter[k]
-    const tagFilterArr = JSON.parse(JSON.stringify(tagFilterProxy))
-    const plywoodAttrArr = el.attr[k].split(' ')
-    const set = [...new Set([...tagFilterArr, ...plywoodAttrArr])]
-    if (tagFilterArr.length + plywoodAttrArr.length > set.length) {
-      count++
+  const filter = filterStore.tag_filter
+  let matchFound = 0
+  const filterCategories = Object.keys(filter)
+  for (const key of filterCategories) {
+    const k = key as keyof typeof filter
+    const selectedAttribute = JSON.parse(JSON.stringify(filter[k]))
+    const plywoodAttribute = plywood.attr[k].split(' ')
+    const attributesSet = [...new Set([...selectedAttribute, ...plywoodAttribute])]
+    if (selectedAttribute.length + plywoodAttribute.length > attributesSet.length) {
+      matchFound++
     }
   }
-  return count == tagFilterKeys.length ? true : false
+  return filterCategories.length === matchFound ? true : false
 }
 
 function applySorting(a: Plywood, b: Plywood) {
