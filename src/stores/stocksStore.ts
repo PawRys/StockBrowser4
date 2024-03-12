@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 import { useSortingStore } from '@/stores/sortingStore'
@@ -36,26 +36,27 @@ function applyTagFilter(el: Plywood) {
 function applySorting(a: Plywood, b: Plywood) {
   const sortingStore = useSortingStore()
   const sortColumn = sortingStore.sortColumn as keyof Plywood
+  const aValue = a[sortColumn] as string
+  const bValue = b[sortColumn] as string
   const sortUnit = sortingStore.sortUnit
   const collator = new Intl.Collator(undefined, {
     usage: 'sort',
     numeric: true
   })
 
-  let first = a[sortColumn]
-  let last = b[sortColumn]
-
+  let lo = aValue
+  let hi = bValue
   if (sortColumn.match(/price/i)) {
-    first = calcPrice(a.size, Number(a[sortColumn]), sortUnit, 'm3')
-    last = calcPrice(b.size, Number(b[sortColumn]), sortUnit, 'm3')
+    lo = calcPrice(a.size, Number(aValue), sortUnit, 'm3').toString()
+    hi = calcPrice(b.size, Number(bValue), sortUnit, 'm3').toString()
   }
   if (sortColumn.match(/Stock/i)) {
-    first = calcQuant(a.size, Number(a[sortColumn]), sortUnit, 'm3')
-    last = calcQuant(b.size, Number(b[sortColumn]), sortUnit, 'm3')
+    lo = calcQuant(a.size, Number(aValue), sortUnit, 'm3').toString()
+    hi = calcQuant(b.size, Number(bValue), sortUnit, 'm3').toString()
   }
-  if (sortingStore.sortDir !== 1) return collator.compare(first, last)
-  if (sortingStore.sortDir === 1) return collator.compare(last, first)
-  return collator.compare(first, last)
+  if (sortingStore.sortDir !== 1) return collator.compare(lo, hi)
+  if (sortingStore.sortDir === 1) return collator.compare(hi, lo)
+  return 0
 }
 
 export const useStocksStore = defineStore(
@@ -72,28 +73,11 @@ export const useStocksStore = defineStore(
       return result
     })
 
-    // watch(
-    //   filterStore.tag_filter,
-    //   () => {
-    //     console.log(filterStore.tag_filter)
-    //   },
-    //   { immediate: true }
-    // )
-
-    // const jso = JSON.parse(localStorage.SB4_products || '[]')
-    // const test2 = reactive(jso)
-    /**
-     * Saving string into localstorage is way more performant
-     */
-    const test2 = ref(localStorage.SB4_products)
-
     function saveProducts(data: unknown) {
       localStorage.SB4_products = JSON.stringify(data)
-      // test2.value = data
-      test2.value = JSON.stringify(data)
     }
 
-    return { test2, products, saveProducts }
+    return { products, saveProducts }
   },
   { persist: false }
 )

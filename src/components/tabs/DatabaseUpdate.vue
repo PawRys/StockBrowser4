@@ -37,7 +37,7 @@ function submit(e: Event): void {
   const formData_object = convertToObject(formData_pureArray, datatype.value)
 
   console.time('merge_data')
-  const localData_object = JSON.parse(stocksStore.test2 || '[]')
+  const localData_object = JSON.parse(localStorage.SB4_products || '[]')
   // const data = stocksStore.test2
   const mergedData = mergeData(formData_object, localData_object, datatype.value)
   stocksStore.saveProducts(mergedData)
