@@ -4,7 +4,7 @@ import { useFilterStore } from '@/stores/filterStore'
 import { useSortingStore } from '@/stores/sortingStore'
 import { calcPrice, calcQuant } from '../components/Utils/functions'
 
-const localStorageRef = ref(localStorage.SB4_products ? localStorage.SB4_products : '[]')
+const localStorageProductsRef = ref(localStorage.SB4_products ? localStorage.SB4_products : '[]')
 
 function applyStatusFilter(el: Plywood) {
   const filterStore = useFilterStore()
@@ -63,7 +63,7 @@ export const useStocksStore = defineStore(
   'SB4_stocksStore',
   () => {
     const products = computed(() => {
-      return JSON.parse(localStorageRef.value)
+      return JSON.parse(localStorageProductsRef.value)
         .filter((el: Plywood) => applyStatusFilter(el))
         .filter((el: Plywood) => applyTagFilter(el))
         .filter((el: Plywood) => applyTextFilter(el))
@@ -72,7 +72,7 @@ export const useStocksStore = defineStore(
 
     function saveProducts(data: Plywood[]) {
       localStorage.SB4_products = JSON.stringify(data)
-      localStorageRef.value = JSON.stringify(data)
+      localStorageProductsRef.value = JSON.stringify(data)
     }
 
     return { products, saveProducts }
