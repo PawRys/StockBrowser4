@@ -34,10 +34,15 @@ function applyTagFilter(plywood: Plywood) {
 }
 
 function applySorting(a: Plywood, b: Plywood) {
+  type SortingColumnsNames = Pick<
+    Plywood,
+    'id' | 'name' | 'size' | 'price' | 'totalStock' | 'aviableStock' | 'stockStatus'
+  >
+
   const sortingStore = useSortingStore()
-  const sortColumn = sortingStore.sortColumn as keyof Plywood
-  const aValue = a[sortColumn] as string
-  const bValue = b[sortColumn] as string
+  const columnName = sortingStore.sortColumn as keyof SortingColumnsNames
+  const aValue = a[columnName] ?? ''
+  const bValue = b[columnName] ?? ''
   const sortUnit = sortingStore.sortUnit
   const collator = new Intl.Collator(undefined, {
     usage: 'sort',
@@ -46,16 +51,16 @@ function applySorting(a: Plywood, b: Plywood) {
 
   let lo = aValue
   let hi = bValue
-  if (sortColumn.match(/price/i)) {
-    lo = calcPrice(a.size, Number(aValue), sortUnit, 'm3').toString()
-    hi = calcPrice(b.size, Number(bValue), sortUnit, 'm3').toString()
+  if (columnName.match(/price/i)) {
+    lo = calcPrice(a.size, Number(aValue), sortUnit, 'm3')
+    hi = calcPrice(b.size, Number(bValue), sortUnit, 'm3')
   }
-  if (sortColumn.match(/Stock/i)) {
-    lo = calcQuant(a.size, Number(aValue), sortUnit, 'm3').toString()
-    hi = calcQuant(b.size, Number(bValue), sortUnit, 'm3').toString()
+  if (columnName.match(/Stock/i)) {
+    lo = calcQuant(a.size, Number(aValue), sortUnit, 'm3')
+    hi = calcQuant(b.size, Number(bValue), sortUnit, 'm3')
   }
-  if (sortingStore.sortDir >= 0) return collator.compare(lo, hi)
-  if (sortingStore.sortDir < 0) return collator.compare(hi, lo)
+  if (sortingStore.sortDir > 0) return collator.compare(lo.toString(), hi.toString())
+  if (sortingStore.sortDir < 0) return collator.compare(hi.toString(), lo.toString())
   return 0
 }
 
