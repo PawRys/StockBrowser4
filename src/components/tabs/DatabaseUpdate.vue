@@ -84,13 +84,13 @@ function convertToObject(data: string[][], datatype: string): Plywood[] {
     const color_val = getColor(searchString, faceType_val)
 
     plywood.id = row[0]
-    plywood.name = row[1] || '???'
-    plywood.size = plywoodSize || '???'
+    plywood.name = row[1] || '-???-'
+    plywood.size = plywoodSize || '-???-'
     plywood.attr = plywood.attr || {}
-    plywood.attr.sizeT = plywoodSize?.split('x')[0] || '???'
-    plywood.attr.sizeA = plywoodSize?.split('x')[1] || '???'
-    plywood.attr.sizeB = plywoodSize?.split('x')[2] || '???'
-    plywood.attr.footSize = getFootSize(plywoodSize) || '???'
+    plywood.attr.sizeT = plywoodSize?.split('x')[0] || '-???-'
+    plywood.attr.sizeA = plywoodSize?.split('x')[1] || '-???-'
+    plywood.attr.sizeB = plywoodSize?.split('x')[2] || '-???-'
+    plywood.attr.footSize = getFootSize(plywoodSize) || '-???-'
     plywood.attr.faceType = faceType_val
     plywood.attr.glueType = glueType_val
     plywood.attr.woodType = woodType_val
@@ -149,11 +149,13 @@ function getGlueType(text: string): string {
   if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) return 'WD'
   if (/lamin|foliowana|antypo/g.test(text)) return 'WD'
   if (/melamin|M\?M/g.test(text)) return 'WD'
-  return '???'
+  return '-???-'
 }
 
 function getFaceType(text: string): string {
-  /* Keep order & A>Z if equal order */
+  /** */
+  /*!!!      Keep order & A>Z if equal order */
+
   /*1*/ if (/\bPQ\W?F\b/gi.test(text)) return 'PQF'
   /*2*/ if (/\bPQ\b/gi.test(text)) return 'PQ'
   /*3*/ if (/s11\/|kilo/gi.test(text)) return 'Kilo'
@@ -179,7 +181,7 @@ function getFaceType(text: string): string {
     const grade = text.match(expression)
     return grade ? grade[0] : '??/??'
   }
-  return '???'
+  return '-???-'
 }
 
 function getWoodType(text: string): string {
@@ -194,7 +196,7 @@ function getWoodType(text: string): string {
   if (/\bEUK\b|eukaliptus/gi.test(text)) results.add('Eukaliptus')
 
   if (results.size === 0) {
-    results.add('???')
+    results.add('-???-')
   }
   return Array.from(results).join(' ')
 }
@@ -229,10 +231,10 @@ function getColor(text: string, faceType: string): string {
     if (faceType === 'PQF') results.add('inny')
   }
   if (results.size === 0) {
-    if (faceType !== '???') results.add('surowa')
+    if (faceType !== '-???-') results.add('surowa')
   }
   if (results.size === 0) {
-    results.add('???')
+    results.add('-???-')
   }
   return Array.from(results).join(' ')
 }

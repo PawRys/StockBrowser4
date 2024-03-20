@@ -17,38 +17,57 @@ const stocksStore = useStocksStore()
     <hr />
     <Filters />
     <hr />
-    <Pagination />
+    <Pagination id="main-pagination" />
     <Sorting />
-    <table id="products">
+    <ol id="products">
       <template
-        v-for="(product, i) in stocksStore.products.slice(
+        v-for="p in stocksStore.products.slice(
           pageStore.firstItemOnPage,
           pageStore.firstItemOnPage + pageStore.pageSize
         )"
-        :key="product.id"
+        :key="p.id"
       >
-        <tr>
-          <td>{{ pageStore.firstItemOnPage + i + 1 }}.</td>
-          <td>{{ product.attr.faceType }}</td>
-          <td>{{ product.attr.color }}</td>
-          <td>{{ product.attr.sizeT }}</td>
-          <td>{{ product.attr.footSize }}</td>
-          <td>{{ product.attr.sizeA }}</td>
-          <td>{{ product.attr.sizeB }}</td>
-          <td>{{ product.attr.woodType }}</td>
-          <td>{{ product.attr.glueType }}</td>
-          <!-- <td>{{ product.stockStatus }}</td> -->
-          <td>{{ product.id }}</td>
-          <td>{{ product.name }}</td>
-          <td>{{ product.price }}</td>
-        </tr>
+        <li>
+          <div class="product-header">
+            <!-- <span>{{ pageStore.firstItemOnPage + i + 1 }}. </span> -->
+            <span>{{ p.id }}</span> - <span class="product-name">{{ p.name }}</span>
+          </div>
+          <div class="product-details">
+            <span>{{ p.size }}</span>
+            <span>{{ p.attr.faceType }}</span>
+            <span>{{ p.attr.color }}</span>
+            <span>{{ p.attr.footSize }}</span>
+            <span>{{ p.attr.woodType }}</span>
+            <span>{{ p.attr.glueType }}</span>
+          </div>
+        </li>
       </template>
-    </table>
+    </ol>
     <Pagination />
   </section>
 </template>
 
 <style scoped>
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  box-shadow: -1px 1px 3px -1px #ddd;
+  margin-block: 1rem;
+}
+
+li > * {
+  margin: 1ch;
+}
+
+.product-details {
+  display: flex;
+  gap: 1ch;
+}
+
+/*
 table {
   border-collapse: collapse;
 }
@@ -56,4 +75,5 @@ td {
   border: solid 1px skyblue;
   padding: 0.2rem 0.3rem;
 }
+*/
 </style>

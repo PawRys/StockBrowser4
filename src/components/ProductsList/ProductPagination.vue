@@ -4,16 +4,29 @@ import { scrollTo } from '../Utils/functions'
 
 const pageStore = usePageStore()
 const pageSizeOptions = [10, 20, 50, 100]
+const scrollTarget = '#main-pagination'
+const remOffset = -2
+
+function prevPage() {
+  pageStore.prevPage()
+  scrollTo(scrollTarget, remOffset)
+}
+function nextPage() {
+  pageStore.nextPage()
+  scrollTo(scrollTarget, remOffset)
+}
+function setPage(e: Event) {
+  pageStore.setPage(e)
+  scrollTo(scrollTarget, remOffset)
+}
 </script>
 
 <template>
   <div class="product-pagination">
-    <button class="prev-page" @click="[pageStore.prevPage(), scrollTo('#products', -50)]">
-      prev
-    </button>
+    <button class="prev-page" @click="prevPage">prev</button>
 
     <button>
-      <select name="set-current-page" id="set-current-page" @change="pageStore.setCurrentPage">
+      <select class="set-page" @change="setPage">
         <option
           v-for="page in pageStore.pageCount"
           :key="`pageCount-${page}`"
@@ -26,11 +39,9 @@ const pageSizeOptions = [10, 20, 50, 100]
       / {{ pageStore.pageCount }}
     </button>
 
-    <button class="next-page" @click="[pageStore.nextPage(), scrollTo('#products', -50)]">
-      next
-    </button>
+    <button class="next-page" @click="nextPage">next</button>
 
-    <select name="set-page-size" id="set-page-size" @change="pageStore.setPageSize">
+    <select class="set-page-size" @change="pageStore.setPageSize">
       <option
         v-for="size of pageSizeOptions"
         :key="`pageSize-${size}`"
@@ -43,8 +54,4 @@ const pageSizeOptions = [10, 20, 50, 100]
   </div>
 </template>
 
-<style scoped>
-.pagination {
-  background-color: hotpink;
-}
-</style>
+<style scoped></style>

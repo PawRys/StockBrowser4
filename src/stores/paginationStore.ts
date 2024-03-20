@@ -22,7 +22,7 @@ export const usePageStore = defineStore(
         currentPageNo.value--
       }
     }
-    const setCurrentPage = (event: Event) => {
+    const setPage = (event: Event) => {
       const target = event.target as HTMLSelectElement
       currentPageNo.value = Number(target.value)
     }
@@ -43,7 +43,7 @@ export const usePageStore = defineStore(
       firstItemOnPage,
       nextPage,
       prevPage,
-      setCurrentPage,
+      setPage,
       setPageSize
     }
   },
