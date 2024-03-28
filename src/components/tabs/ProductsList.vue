@@ -2,10 +2,11 @@ td
 <script setup lang="ts">
 import { usePageStore } from '@/stores/paginationStore'
 import { useStocksStore } from '@/stores/stocksStore'
-import { calcPrice, calcQuant } from '../Utils/functions'
+import { calcQuant } from '../Utils/functions'
 import Pagination from '../ProductsList/ProductPagination.vue'
 import Filters from '../ProductsList/ProductFilters.vue'
 import Sorting from '../ProductsList/ProtuctSorting.vue'
+import PriceGroup from '../ProductsList/ProductList_PriceGroup.vue'
 
 const pageStore = usePageStore()
 const stocksStore = useStocksStore()
@@ -41,9 +42,9 @@ const stocksStore = useStocksStore()
             <span>{{ p.attr.woodType }}</span>
             <span>{{ p.attr.glueType }}</span>
           </div>
-          <div class="product-price-3">
-            {{ calcPrice(p.size, p.price, 'm3', 'm3').toFixed(2) }} zł/m3
-          </div>
+
+          <PriceGroup :p="p" />
+
           <div class="product-quant-3">
             {{ calcQuant(p.size, p.totalStock, 'm3', 'm3').toFixed(3) }} m3
           </div>
