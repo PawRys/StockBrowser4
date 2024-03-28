@@ -89,7 +89,7 @@ li > * {
   position: absolute;
   z-index: -1;
   inset: 0;
-  background-color: cornflowerblue;
+  background-color: lightsalmon;
   transform: skewX(135deg);
 }
 
